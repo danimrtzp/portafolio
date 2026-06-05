@@ -1,12 +1,10 @@
-
-raw
-Index · HTML
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>danimrtzp | Security Researcher</title>
+<link rel="icon" type="image/png" href="imagen.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
@@ -195,7 +193,7 @@ Index · HTML
       max-height: 0; overflow: hidden;
       transition: max-height 0.3s ease;
     }
-    .nav-links.open { max-height: 400px; }
+    .nav-links.open { max-height: 600px; overflow-y: auto; }
     .nav-links li { width: 100%; }
     .nav-links a {
       display: block;
@@ -204,7 +202,19 @@ Index · HTML
       font-size: 14px;
     }
     .nav-links a::after { display: none; }
-    .lang-switcher { padding: 12px 24px; }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      padding: 16px 24px;
+      justify-content: center;
+      border-top: 1px solid var(--border);
+    }
+    .lang-btn {
+      font-size: 13px;
+      padding: 6px 12px;
+      flex: 1;
+      max-width: 80px;
+    }
   }
  
   /* ── SECTIONS ── */
@@ -243,8 +253,8 @@ Index · HTML
     transform-style: preserve-3d;
     transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
   }
-  .hero-avatar-wrap:hover .avatar-flip {
-    transform: rotateY(180deg);
+  @media (hover: hover) {
+    .hero-avatar-wrap:hover .avatar-flip { transform: rotateY(180deg); }
   }
   .avatar-face, .avatar-back {
     position: absolute; inset: 0;
@@ -448,6 +458,12 @@ Index · HTML
     padding: clamp(20px,3vw,32px);
     position: relative;
     overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .about-card:hover {
+    border-color: rgba(0,245,255,0.3);
+    box-shadow: 0 0 24px rgba(0,245,255,0.08), 0 6px 24px rgba(0,245,255,0.05);
+    transform: translateY(-3px);
   }
   .about-card::before {
     content: '';
@@ -482,7 +498,7 @@ Index · HTML
   #skills { background: var(--bg); }
   .skills-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 20px;
   }
   @media(max-width:768px) {
@@ -490,12 +506,17 @@ Index · HTML
     .skill-cat { padding: 18px; }
     .skill-cat-name { font-size: 12px; margin-bottom: 12px; }
     .skill-cat-icon { font-size: 20px; margin-bottom: 8px; }
-    .pill { font-size: 10px; padding: 3px 8px; }
+    .skill-cat .mini-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .skill-cat .mini-card { padding: 10px 6px; }
+    .skill-cat .mini-card-icon { width: 36px; height: 36px; }
+    .skill-cat .mini-card-icon img { width: 22px; height: 22px; }
+    .skill-cat .mini-card-name { font-size: 9px; }
+    .skill-cat .mini-badge { font-size: 7px; padding: 2px 5px; }
   }
   .skill-cat {
     background: var(--surface);
     border: 1px solid var(--border);
-    padding: 24px;
+    padding: 18px 20px;
     position: relative;
     overflow: hidden;
     transition: border-color 0.3s, box-shadow 0.3s;
@@ -512,7 +533,76 @@ Index · HTML
     font-size: 13px; letter-spacing: 2px;
     color: var(--cyan); margin-bottom: 16px;
   }
-  .skill-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .mini-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  @media(max-width:768px) {
+    .mini-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  }
+  @media(max-width:480px) {
+    .mini-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  }
+  .mini-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 6px 8px;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 4px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative; overflow: hidden;
+    cursor: default;
+  }
+  .mini-card:hover {
+    border-color: rgba(0,245,255,0.4);
+    box-shadow: 0 0 16px rgba(0,245,255,0.1);
+    transform: translateY(-4px);
+  }
+  .mini-card-icon {
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,245,255,0.06);
+    border-radius: 8px;
+    border: 1px solid rgba(0,245,255,0.15);
+  }
+  .mini-card-icon img {
+    width: 22px; height: 22px; object-fit: contain;
+  }
+  .mini-card-name {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px; color: var(--text);
+    text-align: center; letter-spacing: 1px;
+  }
+  .mini-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 8px; padding: 2px 6px;
+    border-radius: 20px; letter-spacing: 1px;
+    display: inline-flex; align-items: center; gap: 3px;
+  }
+  .mini-badge::before {
+    content: '';
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: currentColor;
+    display: inline-block;
+  }
+  .badge-cyan {
+    background: rgba(0,245,255,0.12);
+    color: var(--cyan);
+    border: 1px solid rgba(0,245,255,0.3);
+  }
+  .badge-red {
+    background: rgba(255,34,68,0.12);
+    color: var(--red);
+    border: 1px solid rgba(255,34,68,0.3);
+  }
+  .badge-purple {
+    background: rgba(157,78,221,0.12);
+    color: var(--purple);
+    border: 1px solid rgba(157,78,221,0.3);
+  }
   .pill {
     font-family: 'Share Tech Mono', monospace;
     font-size: 11px;
@@ -537,11 +627,14 @@ Index · HTML
     margin-top: 32px;
   }
   @media(max-width:768px) {
-    .platforms-wrap { grid-template-columns: 1fr; gap: 10px; }
+    .platforms-wrap { grid-template-columns: repeat(2, 1fr); gap: 10px; }
     .platform-card { padding: 14px; gap: 12px; }
     .platform-icon { font-size: 22px; }
     .platform-name { font-size: 11px; }
     .platform-user { font-size: 10px; }
+  }
+  @media(max-width:480px) {
+    .platforms-wrap { grid-template-columns: repeat(2, 1fr); }
   }
   .platform-card {
     background: var(--surface2);
@@ -560,7 +653,7 @@ Index · HTML
     transform: scaleY(0);
     transition: transform 0.25s;
   }
-  .platform-card:hover { border-color: rgba(0,245,255,0.3); background: rgba(0,245,255,0.05); }
+  .platform-card:hover { border-color: rgba(0,245,255,0.3); background: rgba(0,245,255,0.05); box-shadow: 0 6px 24px rgba(0,245,255,0.08); transform: translateY(-3px); }
   .platform-card:hover::after { transform: scaleY(1); }
   .platform-icon { font-size: 28px; }
   .platform-info { flex: 1; }
@@ -600,8 +693,8 @@ Index · HTML
   }
   .project-card:hover {
     border-color: rgba(157,78,221,0.5);
-    box-shadow: 0 8px 40px rgba(157,78,221,0.15);
-    transform: translateY(-4px);
+    box-shadow: 0 8px 40px rgba(157,78,221,0.15), 0 0 60px rgba(157,78,221,0.08);
+    transform: translateY(-6px);
   }
   .project-card::before {
     content: '';
@@ -743,8 +836,8 @@ Index · HTML
   }
   .blog-card:hover {
     border-color: rgba(255,34,68,0.4);
-    box-shadow: 0 0 24px rgba(255,34,68,0.1);
-    transform: translateY(-3px);
+    box-shadow: 0 0 24px rgba(255,34,68,0.1), 0 8px 32px rgba(255,34,68,0.08);
+    transform: translateY(-6px);
   }
   .blog-card::before {
     content: '';
@@ -797,7 +890,7 @@ Index · HTML
     width: 3px; background: var(--cyan);
     transform: scaleY(0); transition: transform 0.25s;
   }
-  .contact-link:hover { border-color: rgba(0,245,255,0.3); background: rgba(0,245,255,0.04); }
+  .contact-link:hover { border-color: rgba(0,245,255,0.3); background: rgba(0,245,255,0.04); box-shadow: 0 6px 24px rgba(0,245,255,0.06); transform: translateY(-3px); }
   .contact-link:hover::before { transform: scaleY(1); }
   .contact-link-icon { font-size: 20px; width: 28px; text-align: center; }
   .contact-link-info { flex: 1; }
@@ -917,6 +1010,37 @@ Index · HTML
     0%{transform:translate(-2px,0)}50%{transform:translate(2px,0)}100%{transform:translate(-2px,0)}
   }
  
+
+  /* ── SPOTLIGHT + TILT EFFECT ── */
+  .spotlight {
+    position: relative;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+  }
+  .spotlight::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(340px circle at var(--mx, 50%) var(--my, 50%), rgba(0,245,255,0.15), transparent 60%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+    transition: opacity 0.35s;
+  }
+  .spotlight:hover::after {
+    opacity: 1;
+  }
+  .spotlight:hover {
+    transform: translateY(-6px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  }
+  .about-card, .skill-cat, .project-card, .blog-card, .cert-card, .edu-card, .learn-card, .platform-card, .contact-link {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s, border-color 0.3s;
+  }
+  .about-card:hover, .skill-cat:hover, .project-card:hover, .blog-card:hover, .cert-obtained:hover, .edu-card:hover, .learn-card:hover, .platform-card:hover, .contact-link:hover {
+    transform: translateY(-6px);
+  }
   /* Scrollbar */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg2); }
@@ -963,9 +1087,9 @@ Index · HTML
     position: relative; overflow: hidden;
     transition: border-color 0.3s, box-shadow 0.3s;
   }
-  .edu-card:hover { border-color: rgba(0,245,255,0.3); box-shadow: 0 0 20px rgba(0,245,255,0.08); }
+  .edu-card:hover { border-color: rgba(0,245,255,0.3); box-shadow: 0 0 20px rgba(0,245,255,0.08), 0 6px 24px rgba(0,245,255,0.05); transform: translateY(-3px); }
   .edu-future .edu-card { border-color: rgba(157,78,221,0.25); }
-  .edu-future .edu-card:hover { border-color: rgba(157,78,221,0.5); box-shadow: var(--glow-purple); }
+  .edu-future .edu-card:hover { border-color: rgba(157,78,221,0.5); box-shadow: var(--glow-purple), 0 6px 24px rgba(157,78,221,0.05); transform: translateY(-3px); }
   .edu-period {
     display: flex; align-items: center; gap: 10px;
     margin-bottom: 8px; flex-wrap: wrap;
@@ -1022,8 +1146,8 @@ Index · HTML
   }
   .cert-obtained:hover {
     border-color: var(--cyan);
-    box-shadow: 0 0 30px rgba(0,245,255,0.15), inset 0 0 30px rgba(0,245,255,0.03);
-    transform: translateY(-4px);
+    box-shadow: 0 0 30px rgba(0,245,255,0.15), 0 8px 32px rgba(0,245,255,0.08), inset 0 0 30px rgba(0,245,255,0.03);
+    transform: translateY(-6px);
   }
   .cert-upcoming { opacity: 0.7; cursor: default; }
   .cert-oscp { border-color: rgba(255,34,68,0.2); }
@@ -1074,9 +1198,207 @@ Index · HTML
     border: 1px dashed rgba(157,78,221,0.3);
     margin-top: 8px;
   }
+ 
+  /* ── CUSTOM CURSOR GLITCH DIGITAL ── */
+  body { cursor: none !important; }
+  #cursor-dot {
+    width: 6px; height: 6px;
+    background: var(--cyan);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 99999;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 8px var(--cyan), 0 0 16px rgba(0,245,255,0.5);
+    transition: width 0.15s, height 0.15s, background 0.15s, box-shadow 0.15s;
+  }
+  #cursor-ring {
+    width: 32px; height: 32px;
+    border: 1.5px solid rgba(0,245,255,0.4);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 99998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.08s linear, width 0.25s, height 0.25s, border-color 0.25s, box-shadow 0.25s;
+  }
+  #cursor-ring::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px dashed rgba(157,78,221,0.3);
+    animation: cursor-spin 8s linear infinite;
+  }
+  @keyframes cursor-spin {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes cursor-glitch {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    20% { transform: translate(-53%, -50%) scale(1.02); }
+    40% { transform: translate(-47%, -53%) scale(0.98); }
+    60% { transform: translate(-50%, -47%) scale(1.01); }
+    80% { transform: translate(-52%, -52%) scale(0.99); }
+  }
+  .cursor-glitch-active {
+    animation: cursor-glitch 0.3s ease;
+  }
+  @media (max-width: 768px) { #cursor-dot, #cursor-ring { display: none; } body { cursor: auto !important; } }
+ 
+  /* ── PARTICLES CANVAS ── */
+  #particles-canvas {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.35;
+  }
+ 
+  /* ── TYPING ROTATORIO ── */
+  .typing-cursor::after {
+    content: '|';
+    animation: blink-cursor 0.7s step-end infinite;
+    color: var(--red);
+  }
+  @keyframes blink-cursor { 0%,100%{opacity:1} 50%{opacity:0} }
+ 
+  /* ── SCROLL REVEAL VARIANTS ── */
+  .fade-in-left {
+    opacity: 0; transform: translateX(-30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-in-left.visible { opacity: 1; transform: none; }
+  .fade-in-right {
+    opacity: 0; transform: translateX(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-in-right.visible { opacity: 1; transform: none; }
+  .fade-in-up {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .fade-in-up.visible { opacity: 1; transform: none; }
+ 
+  /* ── GLITCH CONTINUO ── */
+  .glitch-active {
+    animation: glitch-loop 4s infinite;
+  }
+  @keyframes glitch-loop {
+    0%,90%,100% { text-shadow: none; transform: none; }
+    91% { transform: translate(-2px,0); text-shadow: 2px 0 var(--red); }
+    92% { transform: translate(2px,0); text-shadow: -2px 0 var(--cyan); }
+    93% { transform: translate(0,0); text-shadow: none; }
+    95% { transform: translate(-1px,0); text-shadow: 1px 0 var(--purple); }
+    96% { transform: translate(0,0); text-shadow: none; }
+  }
+ 
+  /* ── MOBILE FLIP FIX ── */
+  .avatar-flip.flipped { transform: rotateY(180deg); }
+ 
+  /* ── SECCIÓN APRENDIENDO ── */
+  #learning { background: var(--bg3); }
+  .learning-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; letter-spacing: 4px;
+    color: var(--purple); margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .learning-title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: clamp(22px, 4vw, 34px);
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .learning-title span { color: var(--purple); }
+  .learning-underline {
+    width: 48px; height: 3px;
+    background: linear-gradient(90deg, var(--purple), var(--cyan));
+    margin-bottom: 20px;
+    border-radius: 2px;
+  }
+  .learning-desc {
+    font-size: 14px; color: var(--text-dim);
+    line-height: 1.7; max-width: 520px;
+    margin-bottom: 36px;
+  }
+  .learning-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 16px;
+  }
+  @media (max-width: 600px) {
+    .learning-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  }
+  .learn-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 22px 16px 16px;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 10px;
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .learn-card:hover {
+    border-color: rgba(157,78,221,0.45);
+    box-shadow: 0 0 24px rgba(157,78,221,0.15), 0 8px 32px rgba(157,78,221,0.08);
+    transform: translateY(-6px);
+  }
+  .learn-card-icon {
+    width: 52px; height: 52px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(157,78,221,0.08);
+    border-radius: 10px;
+    border: 1px solid rgba(157,78,221,0.2);
+  }
+  .learn-card-icon img {
+    width: 34px; height: 34px; object-fit: contain;
+  }
+  .learn-card-name {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px; color: var(--text);
+    text-align: center; letter-spacing: 1px;
+  }
+  .learn-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px; padding: 3px 8px;
+    border-radius: 20px; letter-spacing: 1px;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .learn-badge::before {
+    content: '';
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    display: inline-block;
+  }
+  .badge-learning {
+    background: rgba(157,78,221,0.12);
+    color: var(--purple);
+    border: 1px solid rgba(157,78,221,0.3);
+  }
+  .badge-tolearn {
+    background: rgba(0,245,255,0.08);
+    color: var(--cyan-dim);
+    border: 1px solid rgba(0,245,255,0.2);
+  }
+ 
+  /* ── EMAIL CONTACT CARD ── */
+  .contact-links-only {
+    display: flex; flex-direction: column; gap: 12px;
+    max-width: 600px;
+  }
+ 
 </style>
 </head>
 <body>
+ 
+ 
+<!-- CUSTOM CURSOR -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<!-- PARTICLES -->
+<canvas id="particles-canvas"></canvas>
  
 <!-- LOADER -->
 <div id="loader">
@@ -1099,6 +1421,7 @@ Index · HTML
       <li><a href="#about" data-i18n="nav_about">ABOUT</a></li>
       <li><a href="#skills" data-i18n="nav_skills">SKILLS</a></li>
       <li><a href="#projects" data-i18n="nav_projects">PROJECTS</a></li>
+      <li><a href="#learning">LEARNING</a></li>
       <li><a href="#terminal-section" data-i18n="nav_terminal">TERMINAL</a></li>
       <li><a href="#education" data-i18n="nav_education">EDUCACIÓN</a></li>
       <li><a href="#certs" data-i18n="nav_certs">CERTS</a></li>
@@ -1153,8 +1476,8 @@ Index · HTML
     </div>
     <div class="hero-text fade-in">
       <div class="hero-prefix">// Security Researcher & Developer</div>
-      <h1 class="hero-name glitch" data-text="DANIMRTZP">DANIMRTZP</h1>
-      <div class="hero-subtitle" data-i18n="hero_subtitle">ETHICAL HACKER · BARCELONA</div>
+      <h1 class="hero-name glitch glitch-active" data-text="DANIMRTZP">DANIMRTZP</h1>
+      <div class="hero-subtitle typing-cursor" id="hero-typing"></div>
       <p class="hero-desc" data-i18n="hero_desc">
         Daniel Martinez Pinedo. 18 años. Programador y hacker ético de Barcelona.
         Especializado en pentesting, análisis de vulnerabilidades y herramientas de seguridad ofensiva.
@@ -1162,7 +1485,6 @@ Index · HTML
       <div class="hero-tags">
         <span class="hero-tag tag-cyan">Python</span>
         <span class="hero-tag tag-cyan">Bash</span>
-        <span class="hero-tag tag-red">CVE Research</span>
         <span class="hero-tag tag-red">Pentesting</span>
         <span class="hero-tag tag-purple">Arch Linux</span>
         <span class="hero-tag tag-purple">CTF Player</span>
@@ -1184,7 +1506,7 @@ Index · HTML
       <div class="section-line"></div>
     </div>
     <div class="about-grid">
-      <div class="about-card fade-in">
+      <div class="about-card fade-in spotlight">
         <h3 data-i18n="about_bio_title">// BIO</h3>
         <p data-i18n="about_bio_text">
           Tengo 18 años y soy de Barcelona. Me apasiona la ciberseguridad desde pequeño — empecé con CTFs
@@ -1192,7 +1514,7 @@ Index · HTML
           Activo en HackTheBox, TryHackMe y The Hackers Labs.
         </p>
       </div>
-      <div class="about-card fade-in">
+      <div class="about-card fade-in spotlight">
         <h3>// INFO</h3>
         <ul class="info-list">
           <li><span data-i18n="info_name">NOMBRE</span><span>Daniel Martinez Pinedo</span></li>
@@ -1216,100 +1538,151 @@ Index · HTML
       <div class="section-line"></div>
     </div>
     <div class="skills-grid">
-      <div class="skill-cat fade-in">
-        <div class="skill-cat-icon">🔐</div>
+      <div class="skill-cat fade-in spotlight">
+        <div class="skill-cat-icon">&#128272;</div>
         <div class="skill-cat-name" data-i18n="sk_security">SECURITY</div>
-        <div class="skill-pills">
-          <span class="pill pill-red"><img src="https://cdn.simpleicons.org/kalilinux/ff2244" alt="">Pentesting</span>
-          <span class="pill pill-red"><img src="https://cdn.simpleicons.org/hackthebox/ff2244" alt="">CTF</span>
-          <span class="pill pill-red"><img src="https://cdn.simpleicons.org/bugcrowd/ff2244" alt="">Exploit Dev</span>
-          <span class="pill pill-red"><img src="https://cdn.simpleicons.org/duckduckgo/ff2244" alt="">OSINT</span>
-          <span class="pill pill-red"><img src="https://cdn.simpleicons.org/cve/ff2244" alt="">CVE Research</span>
-          <span class="pill pill-red"><img src="https://cdn.simpleicons.org/linux/ff2244" alt="">Privesc</span>
+        <div class="mini-grid">
+          <div class="mini-card"><div class="mini-card-icon"><img src="https://cdn.simpleicons.org/kalilinux/ff2244" alt=""></div><div class="mini-card-name">Pentesting</div><span class="mini-badge badge-red">Sec</span></div>
+          <div class="mini-card"><div class="mini-card-icon"><img src="https://cdn.simpleicons.org/hackthebox/ff2244" alt=""></div><div class="mini-card-name">CTF</div><span class="mini-badge badge-red">Sec</span></div>
+          <div class="mini-card"><div class="mini-card-icon"><img src="https://cdn.simpleicons.org/bugcrowd/ff2244" alt=""></div><div class="mini-card-name">Exploit</div><span class="mini-badge badge-red">Sec</span></div>
+          <div class="mini-card"><div class="mini-card-icon"><img src="https://cdn.simpleicons.org/duckduckgo/ff2244" alt=""></div><div class="mini-card-name">OSINT</div><span class="mini-badge badge-red">Sec</span></div>
+          <div class="mini-card"><div class="mini-card-icon"><img src="https://cdn.simpleicons.org/linux/ff2244" alt=""></div><div class="mini-card-name">Privesc</div><span class="mini-badge badge-red">Sec</span></div>
         </div>
       </div>
-      <div class="skill-cat fade-in">
-        <div class="skill-cat-icon">💻</div>
+      <div class="skill-cat fade-in spotlight">
+        <div class="skill-cat-icon">&#128187;</div>
         <div class="skill-cat-name" data-i18n="sk_languages">LENGUAJES</div>
-        <div class="skill-pills">
-          <span class="pill pill-cyan"><img src="https://cdn.simpleicons.org/python/00f5ff" alt="">Python</span>
-          <span class="pill pill-cyan"><img src="https://cdn.simpleicons.org/gnubash/00f5ff" alt="">Bash Scripting</span>
-          <span class="pill pill-cyan"><img src="Windows-Dark.svg" alt="">Batch</span>
-          <span class="pill pill-cyan"><img src="https://cdn.simpleicons.org/php/00f5ff" alt="">PHP</span>
-          <span class="pill pill-cyan"><img src="https://cdn.simpleicons.org/mysql/00f5ff" alt="">SQL</span>
+        <div class="mini-grid">
+          <div class="mini-card"><div class="mini-card-icon"><img src="https://cdn.simpleicons.org/python/00f5ff" alt=""></div><div class="mini-card-name">Python</div><span class="mini-badge badge-cyan">Lang</span></div>
+          <div class="mini-card"><div class="mini-card-icon"><img src="https://cdn.simpleicons.org/gnubash/00f5ff" alt=""></div><div class="mini-card-name">Bash</div><span class="mini-badge badge-cyan">Lang</span></div>
+          <div class="mini-card"><div class="mini-card-icon"><img src="Windows-Dark.svg" alt=""></div><div class="mini-card-name">Batch</div><span class="mini-badge badge-cyan">Lang</span></div>
+          <div class="mini-card"><div class="mini-card-icon"><img src="https://cdn.simpleicons.org/php/00f5ff" alt=""></div><div class="mini-card-name">PHP</div><span class="mini-badge badge-cyan">Lang</span></div>
+          <div class="mini-card"><div class="mini-card-icon"><img src="https://cdn.simpleicons.org/mysql/00f5ff" alt=""></div><div class="mini-card-name">SQL</div><span class="mini-badge badge-cyan">Lang</span></div>
         </div>
       </div>
-      <div class="skill-cat fade-in">
-        <div class="skill-cat-icon">🛠️</div>
+      <div class="skill-cat fade-in spotlight">
+        <div class="skill-cat-icon">&#128295;</div>
         <div class="skill-cat-name" data-i18n="sk_tools">HERRAMIENTAS</div>
-        <div class="skill-pills">
-          <span class="pill pill-purple"><img src="https://img.icons8.com/?size=100&id=9b5wowKIlo9d&format=png&color=000000" alt="">Nmap</span>
-          <span class="pill pill-purple"><img src="https://cdn.simpleicons.org/metasploit/9d4edd" alt="">Metasploit</span>
-          <span class="pill pill-purple"><img src="https://cdn.simpleicons.org/burpsuite/9d4edd" alt="">Burp Suite</span>
-          <span class="pill pill-purple"><img src="https://cdn.simpleicons.org/wireshark/9d4edd" alt="">Wireshark</span>
-          <span class="pill pill-purple"><img src="sqlmap-logo.svg" alt="">SQLMap</span>
-          <span class="pill pill-purple"><img src="gobuster-logo.svg" alt="">Gobuster</span>
-          <span class="pill pill-purple"><img src="hydra-logo.svg" alt="">Hydra</span>
-          <span class="pill pill-purple"><img src="john-logo.svg" alt="">John</span>
+        <div class="mini-grid">
+          <div class="mini-card"><div class="mini-card-icon"><img src="https://img.icons8.com/?size=100&id=9b5wowKIlo9d&format=png&color=000000" alt=""></div><div class="mini-card-name">Nmap</div><span class="mini-badge badge-purple">Tool</span></div>
+          <div class="mini-card"><div class="mini-card-icon"><img src="https://cdn.simpleicons.org/metasploit/9d4edd" alt=""></div><div class="mini-card-name">Metasploit</div><span class="mini-badge badge-purple">Tool</span></div>
+          <div class="mini-card"><div class="mini-card-icon"><img src="https://cdn.simpleicons.org/burpsuite/9d4edd" alt=""></div><div class="mini-card-name">Burp</div><span class="mini-badge badge-purple">Tool</span></div>
+          <div class="mini-card"><div class="mini-card-icon"><img src="https://cdn.simpleicons.org/wireshark/9d4edd" alt=""></div><div class="mini-card-name">Wireshark</div><span class="mini-badge badge-purple">Tool</span></div>
+          <div class="mini-card"><div class="mini-card-icon"><img src="sqlmap-logo.svg" alt=""></div><div class="mini-card-name">SQLMap</div><span class="mini-badge badge-purple">Tool</span></div>
+          <div class="mini-card"><div class="mini-card-icon"><img src="gobuster-logo.svg" alt=""></div><div class="mini-card-name">Gobuster</div><span class="mini-badge badge-purple">Tool</span></div>
+          <div class="mini-card"><div class="mini-card-icon"><img src="hydra-logo.svg" alt=""></div><div class="mini-card-name">Hydra</div><span class="mini-badge badge-purple">Tool</span></div>
+          <div class="mini-card"><div class="mini-card-icon"><img src="john-logo.svg" alt=""></div><div class="mini-card-name">John</div><span class="mini-badge badge-purple">Tool</span></div>
         </div>
       </div>
-      <div class="skill-cat fade-in">
-        <div class="skill-cat-icon">🐧</div>
+      <div class="skill-cat fade-in spotlight">
+        <div class="skill-cat-icon">&#128025;</div>
         <div class="skill-cat-name" data-i18n="sk_platforms">PLATAFORMAS</div>
-        <div class="skill-pills">
-          <span class="pill pill-cyan"><img src="https://cdn.simpleicons.org/archlinux/00f5ff" alt="">Arch Linux</span>
-          <span class="pill pill-cyan"><img src="https://cdn.simpleicons.org/kalilinux/00f5ff" alt="">Kali Linux</span>
-          <span class="pill pill-cyan"><img src="https://cdn.simpleicons.org/docker/00f5ff" alt="">Docker</span>
-          <span class="pill pill-purple"><img src="logo.png" alt="">DockerLabs</span>
-          <span class="pill pill-purple"><img src="https://cdn.simpleicons.org/hackthebox/9d4edd" alt="">HackTheBox</span>
-          <span class="pill pill-purple"><img src="https://cdn.simpleicons.org/tryhackme/9d4edd" alt="">TryHackMe</span>
-          <span class="pill pill-red"><img src="logo4.png" alt="">The Hackers Labs</span>
+        <div class="mini-grid">
+          <div class="mini-card"><div class="mini-card-icon"><img src="logo.png" alt=""></div><div class="mini-card-name">DockerLabs</div><span class="mini-badge badge-purple">Plat</span></div>
+          <div class="mini-card"><div class="mini-card-icon"><img src="https://cdn.simpleicons.org/hackthebox/9d4edd" alt=""></div><div class="mini-card-name">HTB</div><span class="mini-badge badge-purple">Plat</span></div>
+          <div class="mini-card"><div class="mini-card-icon"><img src="https://cdn.simpleicons.org/tryhackme/9d4edd" alt=""></div><div class="mini-card-name">THM</div><span class="mini-badge badge-purple">Plat</span></div>
+          <div class="mini-card"><div class="mini-card-icon"><img src="logo4.png" alt=""></div><div class="mini-card-name">THL</div><span class="mini-badge badge-red">Plat</span></div>
         </div>
       </div>
-    </div>
- 
-    <!-- Platform links -->
+    </div>    <!-- Platform links -->
     <div class="section-head fade-in" style="margin-top:48px;margin-bottom:24px;">
       <span class="section-num">02.1 //</span>
       <h2 class="section-title" style="font-size:18px;" data-i18n="my_profiles">MIS PERFILES</h2>
       <div class="section-line"></div>
     </div>
     <div class="platforms-wrap">
-      <a class="platform-card fade-in" href="https://github.com/danimrtzp" target="_blank">
+      <a class="platform-card fade-in spotlight" href="https://github.com/danimrtzp" target="_blank">
         <div class="platform-icon"><img src="https://cdn.simpleicons.org/github/00f5ff" style="width:28px;height:28px;" alt="GitHub"></div>
         <div class="platform-info">
           <div class="platform-name">GITHUB</div>
           <div class="platform-user">@danimrtzp</div>
         </div>
       </a>
-      <a class="platform-card fade-in" href="https://app.hackthebox.com/public/users/3353901" target="_blank">
+      <a class="platform-card fade-in spotlight" href="https://app.hackthebox.com/public/users/3353901" target="_blank">
         <div class="platform-icon"><img src="https://cdn.simpleicons.org/hackthebox/00f5ff" style="width:28px;height:28px;" alt="HackTheBox"></div>
         <div class="platform-info">
           <div class="platform-name">HACKTHEBOX</div>
           <div class="platform-user">@danimrtzp</div>
         </div>
       </a>
-      <a class="platform-card fade-in" href="https://tryhackme.com/p/isramrtzp" target="_blank">
+      <a class="platform-card fade-in spotlight" href="https://tryhackme.com/p/isramrtzp" target="_blank">
         <div class="platform-icon"><img src="https://cdn.simpleicons.org/tryhackme/00f5ff" style="width:28px;height:28px;" alt="TryHackMe"></div>
         <div class="platform-info">
           <div class="platform-name">TRYHACKME</div>
           <div class="platform-user">@isramrtzp</div>
         </div>
       </a>
-      <a class="platform-card fade-in" href="https://thehackerslabs.com" target="_blank">
+      <a class="platform-card fade-in spotlight" href="https://thehackerslabs.com" target="_blank">
         <div class="platform-icon"><img src="logo4.png" style="width:28px;height:28px;" alt="The Hackers Labs"></div>
         <div class="platform-info">
           <div class="platform-name">THE HACKERS LABS</div>
           <div class="platform-user">@danimrtzp</div>
         </div>
       </a>
-      <a class="platform-card fade-in" href="https://www.linkedin.com/in/daniel-mart%C3%ADnez-pinedo" target="_blank">
+      <a class="platform-card fade-in spotlight" href="https://www.linkedin.com/in/daniel-mart%C3%ADnez-pinedo" target="_blank">
         <div class="platform-icon"><img src="LinkedIn.svg" style="width:28px;height:28px;" alt="LinkedIn"></div>
         <div class="platform-info">
           <div class="platform-name">LINKEDIN</div>
           <div class="platform-user">Daniel Martínez Pinedo</div>
         </div>
       </a>
+    </div>
+  </div>
+</section>
+ 
+ 
+<!-- APRENDIENDO & PRÓXIMAMENTE -->
+<section id="learning">
+  <div class="section-wrap">
+    <div class="fade-in-left">
+      <div class="learning-label">EN CRECIMIENTO</div>
+      <div class="learning-title">Aprendiendo &amp; <span>Próximamente</span></div>
+      <div class="learning-underline"></div>
+      <p class="learning-desc">Siempre explorando nuevas tecnologías para mantenerme al día en la industria y ampliar mi arsenal de seguridad ofensiva.</p>
+    </div>
+    <div class="learning-grid">
+      <div class="learn-card fade-in-up spotlight">
+        <div class="learn-card-icon">
+          <img src="https://cdn.simpleicons.org/reactnative/00f5ff" alt="React Native" onerror="this.src='https://cdn.simpleicons.org/react/00f5ff'">
+        </div>
+        <div class="learn-card-name">React Native</div>
+        <span class="learn-badge badge-tolearn">Por aprender</span>
+      </div>
+      <div class="learn-card fade-in-up spotlight">
+        <div class="learn-card-icon">
+          <img src="https://cdn.simpleicons.org/c/00f5ff" alt="C" onerror="this.src='https://cdn.simpleicons.org/cplusplus/00f5ff'">
+        </div>
+        <div class="learn-card-name">C</div>
+        <span class="learn-badge badge-learning">Aprendiendo</span>
+      </div>
+      <div class="learn-card fade-in-up spotlight">
+        <div class="learn-card-icon">
+          <img src="https://cdn.simpleicons.org/cplusplus/9d4edd" alt="C++">
+        </div>
+        <div class="learn-card-name">C++</div>
+        <span class="learn-badge badge-tolearn">Por aprender</span>
+      </div>
+      <div class="learn-card fade-in-up spotlight">
+        <div class="learn-card-icon">
+          <img src="https://cdn.simpleicons.org/lua/9d4edd" alt="LUA">
+        </div>
+        <div class="learn-card-name">LUA</div>
+        <span class="learn-badge badge-tolearn">Por aprender</span>
+      </div>
+      <div class="learn-card fade-in-up spotlight">
+        <div class="learn-card-icon">
+          <img src="https://cdn.simpleicons.org/rust/ff2244" alt="Rust">
+        </div>
+        <div class="learn-card-name">Rust</div>
+        <span class="learn-badge badge-tolearn">Por aprender</span>
+      </div>
+      <div class="learn-card fade-in-up spotlight">
+        <div class="learn-card-icon">
+          <img src="https://cdn.simpleicons.org/go/00f5ff" alt="Golang">
+        </div>
+        <div class="learn-card-name">Golang</div>
+        <span class="learn-badge badge-tolearn">Por aprender</span>
+      </div>
     </div>
   </div>
 </section>
@@ -1325,7 +1698,7 @@ Index · HTML
     <div class="projects-grid">
  
       <!-- Project 1: dani-scan -->
-      <div class="project-card fade-in">
+      <div class="project-card fade-in spotlight">
         <div class="project-header">
           <div class="project-name">DANI-SCAN</div>
           <span class="project-badge badge-bash">BASH</span>
@@ -1351,7 +1724,7 @@ Index · HTML
       </div>
  
       <!-- Project 2: CVE exploit -->
-      <div class="project-card fade-in">
+      <div class="project-card fade-in spotlight">
         <div class="project-header">
           <div class="project-name">CVE-2026-31431</div>
           <div style="display:flex;gap:6px;flex-wrap:wrap;">
@@ -1394,7 +1767,7 @@ Index · HTML
     <div class="edu-timeline">
  
       <!-- Future -->
-      <div class="edu-item fade-in edu-future">
+      <div class="edu-item fade-in edu-future spotlight">
         <div class="edu-connector">
           <div class="edu-dot edu-dot-future"></div>
           <div class="edu-line"></div>
@@ -1416,7 +1789,7 @@ Index · HTML
       </div>
  
       <!-- ASIX -->
-      <div class="edu-item fade-in">
+      <div class="edu-item fade-in spotlight">
         <div class="edu-connector">
           <div class="edu-dot edu-dot-active"></div>
           <div class="edu-line"></div>
@@ -1439,7 +1812,7 @@ Index · HTML
       </div>
  
       <!-- SMIX -->
-      <div class="edu-item fade-in">
+      <div class="edu-item fade-in spotlight">
         <div class="edu-connector">
           <div class="edu-dot edu-dot-done"></div>
         </div>
@@ -1475,7 +1848,7 @@ Index · HTML
     <div class="certs-grid">
  
       <!-- eJPTv2 — obtenida -->
-      <a class="cert-card fade-in cert-obtained" href="https://certs.ine.com/eb2b98db-1625-44ba-9a05-b737767277a9#acc.NIjXil91" target="_blank">
+      <a class="cert-card fade-in cert-obtained spotlight" href="https://certs.ine.com/eb2b98db-1625-44ba-9a05-b737767277a9#acc.NIjXil91" target="_blank">
         <div class="cert-glow"></div>
         <div class="cert-header">
           <div class="cert-icon">🎯</div>
@@ -1493,7 +1866,7 @@ Index · HTML
       </a>
  
       <!-- CRTE — próximamente -->
-      <div class="cert-card fade-in cert-upcoming">
+      <div class="cert-card fade-in cert-upcoming spotlight">
         <div class="cert-header">
           <div class="cert-icon">🔜</div>
           <div class="cert-status cert-status-soon" data-i18n="cert_soon">PRÓXIMAMENTE</div>
@@ -1508,7 +1881,7 @@ Index · HTML
       </div>
  
       <!-- AD-RTS -->
-      <div class="cert-card fade-in cert-upcoming">
+      <div class="cert-card fade-in cert-upcoming spotlight">
         <div class="cert-header">
           <div class="cert-icon">🔜</div>
           <div class="cert-status cert-status-soon" data-i18n="cert_soon">PRÓXIMAMENTE</div>
@@ -1523,7 +1896,7 @@ Index · HTML
       </div>
  
       <!-- CJCA -->
-      <div class="cert-card fade-in cert-upcoming">
+      <div class="cert-card fade-in cert-upcoming spotlight">
         <div class="cert-header">
           <div class="cert-icon">🔜</div>
           <div class="cert-status cert-status-soon" data-i18n="cert_soon">PRÓXIMAMENTE</div>
@@ -1538,7 +1911,7 @@ Index · HTML
       </div>
  
       <!-- OSCP -->
-      <div class="cert-card fade-in cert-upcoming cert-oscp">
+      <div class="cert-card fade-in cert-upcoming cert-oscp spotlight">
         <div class="cert-header">
           <div class="cert-icon">💀</div>
           <div class="cert-status cert-status-soon" data-i18n="cert_soon">PRÓXIMAMENTE</div>
@@ -1597,7 +1970,7 @@ Index · HTML
       <div class="section-line"></div>
     </div>
     <div class="blog-grid">
-      <div class="blog-card fade-in">
+      <div class="blog-card fade-in spotlight">
         <div class="blog-date">2026-06-01</div>
         <div class="blog-title" data-i18n="blog1_title">CVE-2026-31431: Análisis del Bug</div>
         <p class="blog-preview" data-i18n="blog1_prev">
@@ -1609,7 +1982,7 @@ Index · HTML
           <span class="pill pill-cyan">Exploit</span>
         </div>
       </div>
-      <div class="blog-card fade-in">
+      <div class="blog-card fade-in spotlight">
         <div class="blog-date">2026-05-15</div>
         <div class="blog-title" data-i18n="blog2_title">DANI-SCAN: De Script a Herramienta</div>
         <p class="blog-preview" data-i18n="blog2_prev">
@@ -1621,7 +1994,7 @@ Index · HTML
           <span class="pill pill-purple">Tool Dev</span>
         </div>
       </div>
-      <div class="blog-card fade-in">
+      <div class="blog-card fade-in spotlight">
         <div class="blog-date">2026-04-20</div>
         <div class="blog-title" data-i18n="blog3_title">CTF Writeup: DockerLabs</div>
         <p class="blog-preview" data-i18n="blog3_prev">
@@ -1646,28 +2019,35 @@ Index · HTML
       <div class="section-line"></div>
     </div>
     <div class="contact-links-only fade-in">
-      <a class="contact-link" href="https://github.com/danimrtzp" target="_blank">
+      <a class="contact-link spotlight" href="mailto:danimrtzp@gmail.com">
+        <div class="contact-link-icon">📧</div>
+        <div class="contact-link-info">
+          <div class="contact-link-name">EMAIL</div>
+          <div class="contact-link-val">danimrtzp@gmail.com</div>
+        </div>
+      </a>
+      <a class="contact-link spotlight" href="https://github.com/danimrtzp" target="_blank">
         <div class="contact-link-icon"><img src="https://cdn.simpleicons.org/github/00f5ff" style="width:24px;height:24px;" alt="GitHub"></div>
         <div class="contact-link-info">
           <div class="contact-link-name">GITHUB</div>
           <div class="contact-link-val">github.com/danimrtzp</div>
         </div>
       </a>
-      <a class="contact-link" href="https://www.linkedin.com/in/daniel-mart%C3%ADnez-pinedo" target="_blank">
+      <a class="contact-link spotlight" href="https://www.linkedin.com/in/daniel-mart%C3%ADnez-pinedo" target="_blank">
         <div class="contact-link-icon"><img src="LinkedIn.svg" style="width:24px;height:24px;" alt="LinkedIn"></div>
         <div class="contact-link-info">
           <div class="contact-link-name">LINKEDIN</div>
           <div class="contact-link-val">daniel-martínez-pinedo</div>
         </div>
       </a>
-      <a class="contact-link" href="https://app.hackthebox.com/public/users/3353901" target="_blank">
+      <a class="contact-link spotlight" href="https://app.hackthebox.com/public/users/3353901" target="_blank">
         <div class="contact-link-icon"><img src="https://cdn.simpleicons.org/hackthebox/00f5ff" style="width:24px;height:24px;" alt="HackTheBox"></div>
         <div class="contact-link-info">
           <div class="contact-link-name">HACKTHEBOX</div>
           <div class="contact-link-val">@danimrtzp</div>
         </div>
       </a>
-      <a class="contact-link" href="https://tryhackme.com/p/isramrtzp" target="_blank">
+      <a class="contact-link spotlight" href="https://tryhackme.com/p/isramrtzp" target="_blank">
         <div class="contact-link-icon"><img src="https://cdn.simpleicons.org/tryhackme/00f5ff" style="width:24px;height:24px;" alt="TryHackMe"></div>
         <div class="contact-link-info">
           <div class="contact-link-name">TRYHACKME</div>
@@ -2027,6 +2407,140 @@ function sendContact() {
   setTimeout(() => { fb.textContent = ''; }, 4000);
 }
  
+ 
+// ─── CUSTOM CURSOR GLITCH DIGITAL ───────────────────────────────
+(function() {
+  const dot = document.getElementById('cursor-dot');
+  const ring = document.getElementById('cursor-ring');
+  if (!dot || !ring) return;
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animCursor() {
+    rx += (mx - rx) * 0.14;
+    ry += (my - ry) * 0.14;
+    dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+  document.querySelectorAll('a, button, .btn, .pill, .cert-card, .blog-card, .project-card, .skill-card, .learn-card, .platform-card, .contact-link').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      dot.style.width = '10px'; dot.style.height = '10px';
+      dot.style.background = 'var(--red)';
+      dot.style.boxShadow = '0 0 12px var(--red), 0 0 24px rgba(255,34,68,0.6)';
+      ring.style.width = '48px'; ring.style.height = '48px';
+      ring.style.borderColor = 'rgba(255,34,68,0.6)';
+      ring.style.boxShadow = '0 0 20px rgba(255,34,68,0.2)';
+      ring.classList.add('cursor-glitch-active');
+      setTimeout(() => ring.classList.remove('cursor-glitch-active'), 300);
+    });
+    el.addEventListener('mouseleave', () => {
+      dot.style.width = '6px'; dot.style.height = '6px';
+      dot.style.background = 'var(--cyan)';
+      dot.style.boxShadow = '0 0 8px var(--cyan), 0 0 16px rgba(0,245,255,0.5)';
+      ring.style.width = '32px'; ring.style.height = '32px';
+      ring.style.borderColor = 'rgba(0,245,255,0.4)';
+      ring.style.boxShadow = 'none';
+    });
+  });
+})();
+ 
+// ─── PARTICLES ──────────────────────────────────────────────────
+(function() {
+  const canvas = document.getElementById('particles-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  const COLORS = ['rgba(0,245,255,', 'rgba(157,78,221,', 'rgba(255,34,68,'];
+  const isMobile = window.innerWidth < 768;
+  const particleCount = isMobile ? 20 : 55;
+  for (let i = 0; i < particleCount; i++) {
+    particles.push({
+      x: Math.random() * 1920, y: Math.random() * 1080,
+      vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3,
+      r: Math.random() * 1.5 + 0.3,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      a: Math.random() * 0.5 + 0.1
+    });
+  }
+  function drawFrame() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color + p.a + ')';
+      ctx.fill();
+    });
+    // draw connections (disabled on mobile)
+    if (!isMobile) {
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(0,245,255,${0.04 * (1 - dist/120)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+    }
+    requestAnimationFrame(drawFrame);
+  }
+  drawFrame();
+})();
+ 
+// ─── TYPING ROTATORIO ───────────────────────────────────────────
+(function() {
+  const el = document.getElementById('hero-typing');
+  if (!el) return;
+  const roles = ['ETHICAL HACKER · BARCELONA', 'CTF PLAYER · BCN', 'PENTESTER · BARCELONA', 'CVE RESEARCHER', 'SECURITY DEV · BCN'];
+  let ri = 0, ci = 0, deleting = false;
+  function tick() {
+    const word = roles[ri];
+    if (!deleting) {
+      el.textContent = word.slice(0, ci + 1);
+      ci++;
+      if (ci === word.length) { deleting = true; setTimeout(tick, 1800); return; }
+    } else {
+      el.textContent = word.slice(0, ci - 1);
+      ci--;
+      if (ci === 0) { deleting = false; ri = (ri + 1) % roles.length; setTimeout(tick, 300); return; }
+    }
+    setTimeout(tick, deleting ? 40 : 70);
+  }
+  setTimeout(tick, 3000);
+})();
+ 
+// ─── MOBILE FLIP FIX ────────────────────────────────────────────
+(function() {
+  const wrap = document.querySelector('.hero-avatar-wrap');
+  const flip = document.querySelector('.avatar-flip');
+  if (!wrap || !flip) return;
+  const isTouchDevice = () => window.matchMedia('(hover: none)').matches;
+  wrap.addEventListener('click', () => {
+    if (isTouchDevice()) flip.classList.toggle('flipped');
+  });
+})();
+ 
+// ─── SCROLL REVEAL EXTENDED ─────────────────────────────────────
+(function() {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fade-in-left, .fade-in-right, .fade-in-up').forEach(el => observer.observe(el));
+})();
+ 
 // ─── SMOOTH SCROLL ──────────────────────────────────────────────
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {
@@ -2036,6 +2550,41 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 });
+
+// ─── SPOTLIGHT + TILT EFFECT ───────────────────────────────────
+(function() {
+  const cards = document.querySelectorAll('.spotlight');
+  if (!cards.length) return;
+  
+  // Check for touch device
+  const isTouch = window.matchMedia('(hover: none)').matches;
+  if (isTouch) return;
+  
+  cards.forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      
+      // Spotlight position
+      card.style.setProperty('--mx', x + '%');
+      card.style.setProperty('--my', y + '%');
+      
+      // 3D Tilt calculation (max ±5 degrees)
+      const rx = ((y - 50) / 50) * -5;
+      const ry = ((x - 50) / 50) * 5;
+      card.style.setProperty('--rx', rx + 'deg');
+      card.style.setProperty('--ry', ry + 'deg');
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      card.style.setProperty('--mx', '50%');
+      card.style.setProperty('--my', '50%');
+      card.style.setProperty('--rx', '0deg');
+      card.style.setProperty('--ry', '0deg');
+    });
+  });
+})();
 </script>
 </body>
 </html>
