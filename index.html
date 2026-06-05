@@ -1,0 +1,2041 @@
+
+raw
+Index · HTML
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>danimrtzp | Security Researcher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyan: #00f5ff;
+    --cyan-dim: #00c8d4;
+    --cyan-dark: #007a82;
+    --red: #ff2244;
+    --red-dim: #cc1a36;
+    --purple: #9d4edd;
+    --purple-dim: #7b2fd0;
+    --bg: #050a0f;
+    --bg2: #080d14;
+    --bg3: #0a1220;
+    --surface: #0d1928;
+    --surface2: #101e30;
+    --text: #c8e6f0;
+    --text-dim: #6a8fa0;
+    --border: rgba(0,245,255,0.15);
+    --glow-cyan: 0 0 20px rgba(0,245,255,0.4);
+    --glow-red: 0 0 20px rgba(255,34,68,0.4);
+    --glow-purple: 0 0 20px rgba(157,78,221,0.4);
+  }
+ 
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+ 
+  html { scroll-behavior: smooth; }
+ 
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
+ 
+  /* ── LOADING SCREEN ── */
+  #loader {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    z-index: 9999;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 20px;
+    overflow: hidden;
+  }
+  .loader-name {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: clamp(40px, 10vw, 90px);
+    letter-spacing: clamp(6px, 2vw, 18px);
+    color: var(--cyan);
+    text-shadow: 0 0 10px rgba(0,245,255,0.6), 0 0 30px rgba(0,245,255,0.3);
+    animation: flicker 2s infinite;
+    min-height: 1.2em;
+  }
+  @keyframes flicker {
+    0%,100%{opacity:1}50%{opacity:0.85}92%{opacity:0.6}93%{opacity:1}
+  }
+  .loader-bar-wrap {
+    width: min(400px, 80vw);
+    height: 3px;
+    background: var(--surface);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+  .loader-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--purple), var(--cyan), var(--red));
+    animation: loadbar 2.2s ease forwards;
+    box-shadow: 0 0 12px var(--cyan);
+  }
+  @keyframes loadbar { to { width: 100%; } }
+  .loader-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--cyan-dim);
+    min-height: 20px;
+  }
+  .loader-pct {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+ 
+  /* ── BG GRID ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+ 
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(5,10,15,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 clamp(16px, 4vw, 48px);
+    height: 60px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: clamp(14px, 2.5vw, 20px);
+    color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+    letter-spacing: 2px;
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex; gap: clamp(12px, 2vw, 28px);
+    align-items: center;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(11px, 1.3vw, 14px);
+    color: var(--text-dim);
+    text-decoration: none;
+    letter-spacing: 1px;
+    transition: color 0.2s, text-shadow 0.2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: -4px; left: 0; right: 0;
+    height: 1px;
+    background: var(--cyan);
+    transform: scaleX(0);
+    transition: transform 0.2s;
+  }
+  .nav-links a:hover { color: var(--cyan); text-shadow: var(--glow-cyan); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+ 
+  /* Language switcher */
+  .lang-switcher {
+    display: flex; gap: 4px; align-items: center;
+  }
+  .lang-btn {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 4px 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 3px;
+    letter-spacing: 1px;
+  }
+  .lang-btn:hover, .lang-btn.active {
+    border-color: var(--cyan);
+    color: var(--cyan);
+    background: rgba(0,245,255,0.08);
+    box-shadow: 0 0 8px rgba(0,245,255,0.2);
+  }
+  .hamburger {
+    display: none;
+    background: none; border: none;
+    cursor: pointer;
+    flex-direction: column; gap: 5px;
+  }
+  .hamburger span {
+    display: block; width: 24px; height: 2px;
+    background: var(--cyan);
+    transition: all 0.3s;
+  }
+  @media(max-width:768px) {
+    .hamburger { display: flex; }
+    .nav-links {
+      position: fixed; top: 60px; left: 0; right: 0;
+      background: rgba(5,10,15,0.98);
+      border-bottom: 1px solid var(--border);
+      flex-direction: column; gap: 0;
+      padding: 0;
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    .nav-links.open { max-height: 400px; }
+    .nav-links li { width: 100%; }
+    .nav-links a {
+      display: block;
+      padding: 14px 24px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .nav-links a::after { display: none; }
+    .lang-switcher { padding: 12px 24px; }
+  }
+ 
+  /* ── SECTIONS ── */
+  section { position: relative; z-index: 1; }
+ 
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 80px clamp(16px,5vw,80px) 40px;
+  }
+  @media(max-width:768px) {
+    #hero { padding: 60px clamp(12px, 4vw, 32px) 24px; }
+    .hero-inner { gap: 20px; }
+    .avatar-flip {
+      width: clamp(120px, 35vw, 260px);
+      height: clamp(120px, 35vw, 260px);
+    }
+    .hero-text { min-width: 0; flex: 1 1 100%; }
+    .hero-name { letter-spacing: 2px; }
+  }
+  .hero-inner {
+    display: flex; flex-wrap: wrap;
+    gap: clamp(30px, 5vw, 60px);
+    align-items: center; justify-content: center;
+    max-width: 1100px; width: 100%;
+  }
+  .hero-avatar-wrap {
+    position: relative; flex-shrink: 0;
+    perspective: 800px;
+  }
+  .avatar-flip {
+    width: clamp(180px, 25vw, 260px);
+    height: clamp(180px, 25vw, 260px);
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+  }
+  .hero-avatar-wrap:hover .avatar-flip {
+    transform: rotateY(180deg);
+  }
+  .avatar-face, .avatar-back {
+    position: absolute; inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  .avatar-back {
+    transform: rotateY(180deg);
+  }
+  .avatar-hexagon {
+    width: 100%; height: 100%;
+    position: relative;
+  }
+  .avatar-hexagon::before {
+    content: '';
+    position: absolute; inset: -3px;
+    background: linear-gradient(135deg, var(--cyan), var(--purple), var(--red));
+    clip-path: polygon(50% 0%,95% 25%,95% 75%,50% 100%,5% 75%,5% 25%);
+    animation: rotateBorder 8s linear infinite;
+  }
+  @keyframes rotateBorder {
+    0%{filter:hue-rotate(0deg)} 100%{filter:hue-rotate(360deg)}
+  }
+  .avatar-hexagon img {
+    position: absolute; inset: 3px;
+    width: calc(100% - 6px); height: calc(100% - 6px);
+    object-fit: cover;
+    clip-path: polygon(50% 0%,95% 25%,95% 75%,50% 100%,5% 75%,5% 25%);
+    display: block;
+  }
+  .avatar-placeholder {
+    position: absolute; inset: 3px;
+    clip-path: polygon(50% 0%,95% 25%,95% 75%,50% 100%,5% 75%,5% 25%);
+    background: linear-gradient(135deg, var(--surface), var(--bg3));
+    display: flex; align-items: center; justify-content: center;
+  }
+  .avatar-placeholder svg { width: 60%; height: 60%; opacity: 0.5; }
+  .avatar-ring {
+    position: absolute; inset: -12px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,245,255,0.2);
+    animation: spinRing 12s linear infinite;
+  }
+  @keyframes spinRing { to { transform: rotate(360deg); } }
+  .avatar-ring::after {
+    content: '';
+    position: absolute; top: 0; left: 50%;
+    width: 6px; height: 6px;
+    background: var(--cyan);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: var(--glow-cyan);
+  }
+  .status-dot {
+    position: absolute; bottom: 10px; right: 10px;
+    width: 14px; height: 14px;
+    background: #00ff88;
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 10px #00ff88;
+    animation: pulse-dot 2s ease infinite;
+  }
+  @keyframes pulse-dot {
+    0%,100%{box-shadow:0 0 10px #00ff88}50%{box-shadow:0 0 20px #00ff88,0 0 30px rgba(0,255,136,0.4)}
+  }
+ 
+  .hero-text { flex: 1; min-width: 280px; }
+  .hero-prefix {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(11px, 1.5vw, 14px);
+    color: var(--purple);
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+  .hero-name {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: clamp(32px, 7vw, 72px);
+    line-height: 1;
+    background: linear-gradient(90deg, var(--cyan) 0%, var(--purple) 50%, var(--red) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+    letter-spacing: 4px;
+  }
+  
+  .hero-subtitle {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(13px, 2vw, 18px);
+    color: var(--red);
+    text-shadow: var(--glow-red);
+    margin-bottom: 16px;
+    letter-spacing: 2px;
+  }
+  .hero-desc {
+    font-size: clamp(14px, 2vw, 17px);
+    color: var(--text-dim);
+    line-height: 1.7;
+    max-width: 520px;
+    margin-bottom: 28px;
+  }
+  .hero-tags {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 30px;
+  }
+  .hero-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+  }
+  .tag-cyan { border: 1px solid var(--cyan-dark); color: var(--cyan); background: rgba(0,245,255,0.06); }
+  .tag-red { border: 1px solid #5c0f1a; color: var(--red); background: rgba(255,34,68,0.06); }
+  .tag-purple { border: 1px solid #4a1a6b; color: var(--purple); background: rgba(157,78,221,0.06); }
+ 
+  .hero-btns { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(11px, 1.5vw, 13px);
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 12px 24px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: all 0.25s;
+    position: relative;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--cyan-dark), var(--cyan-dim));
+    color: var(--bg);
+  }
+  .btn-primary:hover {
+    background: linear-gradient(135deg, var(--cyan), var(--cyan));
+    box-shadow: var(--glow-cyan);
+    transform: translateY(-2px);
+  }
+  .btn-outline {
+    background: transparent;
+    color: var(--cyan);
+    border: 1px solid var(--cyan-dark);
+  }
+  .btn-outline:hover {
+    background: rgba(0,245,255,0.1);
+    box-shadow: var(--glow-cyan);
+    transform: translateY(-2px);
+  }
+ 
+  /* ── SECTION COMMON ── */
+  .section-wrap {
+    max-width: 1100px; margin: 0 auto;
+    padding: 80px clamp(16px,5vw,48px);
+  }
+  @media(max-width:768px) {
+    .section-wrap { padding: 60px clamp(12px, 4vw, 32px); }
+    .section-head { margin-bottom: 32px; }
+  }
+  .section-head {
+    margin-bottom: 48px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .section-num {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--red);
+    letter-spacing: 2px;
+  }
+  .section-title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: clamp(20px, 4vw, 32px);
+    color: var(--text);
+    letter-spacing: 2px;
+  }
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+ 
+  /* ── ABOUT ── */
+  #about { background: var(--bg2); }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(24px, 4vw, 48px);
+  }
+  @media(max-width:768px) {
+    .about-grid { grid-template-columns: 1fr; gap: 16px; }
+    .about-card { padding: 18px; }
+    .info-list li { font-size: 13px; gap: 8px; }
+    .info-list li span:first-child { min-width: 90px; }
+  }
+  .about-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: clamp(20px,3vw,32px);
+    position: relative;
+    overflow: hidden;
+  }
+  .about-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 2px;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+  }
+  .about-card h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: var(--cyan);
+    margin-bottom: 16px;
+  }
+  .about-card p {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--text-dim);
+  }
+  .info-list { list-style: none; }
+  .info-list li {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex; gap: 12px; align-items: baseline;
+    color: var(--text-dim);
+  }
+  .info-list li span:first-child { color: var(--cyan); min-width: 90px; }
+ 
+  /* ── SKILLS ── */
+  #skills { background: var(--bg); }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: 20px;
+  }
+  @media(max-width:768px) {
+    .skills-grid { grid-template-columns: 1fr; gap: 12px; }
+    .skill-cat { padding: 18px; }
+    .skill-cat-name { font-size: 12px; margin-bottom: 12px; }
+    .skill-cat-icon { font-size: 20px; margin-bottom: 8px; }
+    .pill { font-size: 10px; padding: 3px 8px; }
+  }
+  .skill-cat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .skill-cat:hover {
+    border-color: rgba(0,245,255,0.4);
+    box-shadow: 0 0 24px rgba(0,245,255,0.1);
+  }
+  .skill-cat-icon {
+    font-size: 24px; margin-bottom: 12px;
+  }
+  .skill-cat-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px; letter-spacing: 2px;
+    color: var(--cyan); margin-bottom: 16px;
+  }
+  .skill-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 2px;
+    border: 1px solid;
+    transition: all 0.2s;
+    cursor: default;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .pill img { width: 14px; height: 14px; display: inline-block; vertical-align: middle; flex-shrink: 0; }
+  .pill-cyan { border-color: var(--cyan-dark); color: var(--cyan); background: rgba(0,245,255,0.06); }
+  .pill-red { border-color: #5c0f1a; color: var(--red); background: rgba(255,34,68,0.06); }
+  .pill-purple { border-color: #4a1a6b; color: var(--purple); background: rgba(157,78,221,0.06); }
+  .pill:hover { transform: scale(1.05); box-shadow: 0 0 8px currentColor; }
+ 
+  /* ── PLATFORMS ── */
+  .platforms-wrap {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    gap: 16px;
+    margin-top: 32px;
+  }
+  @media(max-width:768px) {
+    .platforms-wrap { grid-template-columns: 1fr; gap: 10px; }
+    .platform-card { padding: 14px; gap: 12px; }
+    .platform-icon { font-size: 22px; }
+    .platform-name { font-size: 11px; }
+    .platform-user { font-size: 10px; }
+  }
+  .platform-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 20px;
+    display: flex; align-items: center; gap: 16px;
+    text-decoration: none;
+    transition: all 0.25s;
+    position: relative; overflow: hidden;
+  }
+  .platform-card::after {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--cyan);
+    transform: scaleY(0);
+    transition: transform 0.25s;
+  }
+  .platform-card:hover { border-color: rgba(0,245,255,0.3); background: rgba(0,245,255,0.05); }
+  .platform-card:hover::after { transform: scaleY(1); }
+  .platform-icon { font-size: 28px; }
+  .platform-info { flex: 1; }
+  .platform-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px; letter-spacing: 1px;
+    color: var(--text); margin-bottom: 4px;
+  }
+  .platform-user {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; color: var(--cyan);
+  }
+ 
+  /* ── PROJECTS ── */
+  #projects { background: var(--bg2); }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr));
+    gap: 24px;
+  }
+  @media(max-width:768px) {
+    .projects-grid { grid-template-columns: 1fr; gap: 16px; }
+    .project-card { padding: 18px; }
+    .project-header { flex-wrap: wrap; gap: 8px; }
+    .project-name { font-size: clamp(14px, 2vw, 16px); }
+    .project-badge { font-size: 9px; padding: 2px 6px; }
+    .proj-link { font-size: 11px; padding: 5px 10px; }
+    .pill { font-size: 10px; padding: 3px 8px; }
+  }
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: clamp(20px,3vw,32px);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  }
+  .project-card:hover {
+    border-color: rgba(157,78,221,0.5);
+    box-shadow: 0 8px 40px rgba(157,78,221,0.15);
+    transform: translateY(-4px);
+  }
+  .project-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--purple), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .project-card:hover::before { opacity: 1; }
+  .project-header {
+    display: flex; justify-content: space-between;
+    align-items: flex-start; margin-bottom: 12px; gap: 12px;
+  }
+  .project-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(14px,2vw,18px); font-weight: 700;
+    color: var(--text); letter-spacing: 1px;
+  }
+  .project-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px; padding: 3px 8px;
+    border-radius: 2px; letter-spacing: 1px;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .badge-bash { background: rgba(0,245,255,0.1); color: var(--cyan); border: 1px solid var(--cyan-dark); }
+  .badge-python { background: rgba(157,78,221,0.1); color: var(--purple); border: 1px solid #4a1a6b; }
+  .badge-cve { background: rgba(255,34,68,0.1); color: var(--red); border: 1px solid #5c0f1a; }
+  .project-desc {
+    font-size: 14px; line-height: 1.7;
+    color: var(--text-dim); margin-bottom: 16px;
+  }
+  .project-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+  .project-links { display: flex; gap: 12px; flex-wrap: wrap; }
+  .proj-link {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px; color: var(--cyan);
+    text-decoration: none; padding: 6px 14px;
+    border: 1px solid var(--cyan-dark);
+    background: rgba(0,245,255,0.04);
+    transition: all 0.2s;
+    letter-spacing: 1px;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .proj-link:hover {
+    background: rgba(0,245,255,0.12);
+    box-shadow: var(--glow-cyan);
+  }
+  .cvss-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; color: var(--red);
+    background: rgba(255,34,68,0.08);
+    border: 1px solid #5c0f1a;
+    padding: 3px 10px; border-radius: 2px;
+    margin-bottom: 12px;
+  }
+ 
+  /* ── TERMINAL ── */
+  #terminal-section { background: var(--bg); }
+  .terminal-wrap {
+    background: #040910;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    max-width: 820px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.6), 0 0 80px rgba(0,245,255,0.05);
+  }
+  .term-titlebar {
+    background: var(--surface2);
+    padding: 10px 16px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .term-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .term-dot-r { background: #ff5f57; }
+  .term-dot-y { background: #ffbd2e; }
+  .term-dot-g { background: #28ca41; }
+  .term-title {
+    flex: 1; text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px; color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+  .term-body {
+    padding: 20px;
+    min-height: 320px;
+    max-height: 420px;
+    overflow-y: auto;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(11px,1.5vw,13px);
+    line-height: 1.7;
+    display: flex; flex-direction: column;
+  }
+  .term-output { flex: 1; }
+  .term-line { margin-bottom: 2px; white-space: pre-wrap; }
+  .term-prompt { color: var(--cyan); }
+  .term-prompt span { color: var(--purple); }
+  .term-response { color: var(--text-dim); padding-left: 0; }
+  .term-cyan { color: var(--cyan); }
+  .term-red { color: var(--red); }
+  .term-purple { color: var(--purple); }
+  .term-green { color: #00ff88; }
+  .term-input-row {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    padding-top: 10px;
+  }
+  .term-input {
+    flex: 1;
+    background: transparent; border: none; outline: none;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(11px,1.5vw,13px);
+    color: var(--text);
+    caret-color: var(--cyan);
+  }
+ 
+  /* ── BLOG ── */
+  #blog { background: var(--bg2); }
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: 20px;
+  }
+  @media(max-width:768px) {
+    .blog-grid { grid-template-columns: 1fr; gap: 14px; }
+    .blog-card { padding: 18px; }
+    .blog-title { font-size: 14px; }
+    .blog-preview { font-size: 12px; }
+  }
+  .blog-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 24px;
+    transition: all 0.25s;
+    position: relative; overflow: hidden;
+    cursor: pointer;
+  }
+  .blog-card:hover {
+    border-color: rgba(255,34,68,0.4);
+    box-shadow: 0 0 24px rgba(255,34,68,0.1);
+    transform: translateY(-3px);
+  }
+  .blog-card::before {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--red), var(--purple));
+    transform: scaleX(0); transition: transform 0.3s;
+  }
+  .blog-card:hover::before { transform: scaleX(1); }
+  .blog-date {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+  .blog-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 15px; color: var(--text);
+    margin-bottom: 10px; letter-spacing: 1px;
+    line-height: 1.4;
+  }
+  .blog-preview {
+    font-size: 13px; color: var(--text-dim); line-height: 1.6;
+    margin-bottom: 14px;
+  }
+  .blog-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+ 
+  /* ── CONTACT ── */
+  #contact { background: var(--bg); }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(24px,4vw,48px);
+  }
+  @media(max-width:768px) {
+    .contact-grid { grid-template-columns: 1fr; gap: 24px; }
+    .contact-link { padding: 14px 16px; gap: 12px; }
+  }
+  .contact-links { display: flex; flex-direction: column; gap: 12px; }
+  .contact-link {
+    display: flex; align-items: center; gap: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    text-decoration: none;
+    transition: all 0.25s;
+    position: relative; overflow: hidden;
+  }
+  .contact-link::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; background: var(--cyan);
+    transform: scaleY(0); transition: transform 0.25s;
+  }
+  .contact-link:hover { border-color: rgba(0,245,255,0.3); background: rgba(0,245,255,0.04); }
+  .contact-link:hover::before { transform: scaleY(1); }
+  .contact-link-icon { font-size: 20px; width: 28px; text-align: center; }
+  .contact-link-info { flex: 1; }
+  .contact-link-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px; letter-spacing: 1px; color: var(--text); margin-bottom: 3px;
+  }
+  .contact-link-val {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px; color: var(--cyan);
+  }
+  .contact-form { display: flex; flex-direction: column; gap: 14px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; color: var(--text-dim); letter-spacing: 1px;
+  }
+  .form-input, .form-textarea {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .form-input:focus, .form-textarea:focus {
+    border-color: var(--cyan-dark);
+    box-shadow: 0 0 0 1px rgba(0,245,255,0.1);
+  }
+  .form-textarea { resize: vertical; min-height: 120px; }
+ 
+  /* ── FOOTER ── */
+  footer {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 28px clamp(16px,5vw,48px);
+    display: flex; flex-wrap: wrap;
+    justify-content: space-between; align-items: center;
+    gap: 12px;
+    position: relative; z-index: 1;
+  }
+  .footer-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900; font-size: 16px;
+    color: var(--cyan); text-shadow: var(--glow-cyan);
+    letter-spacing: 2px;
+  }
+  .footer-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px; color: var(--text-dim);
+  }
+ 
+  /* ── SCROLL INDICATOR ── */
+  .scroll-progress {
+    position: fixed; top: 60px; left: 0; right: 0;
+    height: 2px; z-index: 99;
+    background: transparent;
+  }
+  .scroll-bar {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--purple), var(--cyan), var(--red));
+    transition: width 0.1s;
+  }
+ 
+  /* ── ANIMATIONS ── */
+  .fade-in {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-in.visible { opacity: 1; transform: none; }
+ 
+  /* ── SCANLINE EFFECT ── */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none; z-index: 9998;
+  }
+ 
+  /* ── GLITCH EFFECT ── */
+  .glitch {
+    position: relative;
+  }
+  .glitch:hover::before, .glitch:hover::after {
+    content: attr(data-text);
+    position: absolute; top: 0; left: 0;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: inherit;
+    width: 100%;
+    background: linear-gradient(135deg, var(--cyan), var(--purple), var(--red));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .glitch:hover::before {
+    left: 2px; top: -2px;
+    clip-path: polygon(0 30%, 100% 30%, 100% 60%, 0 60%);
+    animation: glitch1 0.3s infinite;
+  }
+  .glitch:hover::after {
+    left: -2px; top: 2px;
+    clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%);
+    animation: glitch2 0.3s infinite;
+  }
+  @keyframes glitch1 {
+    0%{clip-path:polygon(0 30%,100% 30%,100% 60%,0 60%);transform:translate(2px,0)}
+    50%{clip-path:polygon(0 10%,100% 10%,100% 40%,0 40%);transform:translate(-2px,0)}
+    100%{clip-path:polygon(0 50%,100% 50%,100% 70%,0 70%);transform:translate(2px,0)}
+  }
+  @keyframes glitch2 {
+    0%{transform:translate(-2px,0)}50%{transform:translate(2px,0)}100%{transform:translate(-2px,0)}
+  }
+ 
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg2); }
+  ::-webkit-scrollbar-thumb { background: var(--cyan-dark); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
+ 
+  /* ── RESPONSIVE NAV ── */
+  .nav-right {
+    display: flex; align-items: center; gap: 16px;
+  }
+ 
+  /* ── EDUCATION ── */
+  #education { background: var(--bg2); }
+  .edu-timeline { display: flex; flex-direction: column; gap: 0; }
+  .edu-item {
+    display: flex; gap: 0; align-items: stretch;
+    position: relative;
+  }
+  .edu-connector {
+    display: flex; flex-direction: column; align-items: center;
+    width: 40px; flex-shrink: 0; padding-top: 6px;
+  }
+  .edu-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    flex-shrink: 0; position: relative; z-index: 1;
+    margin-top: 4px;
+  }
+  .edu-dot-done { background: var(--cyan-dark); border: 2px solid var(--cyan); box-shadow: var(--glow-cyan); }
+  .edu-dot-active {
+    background: var(--cyan); border: 2px solid #fff;
+    box-shadow: var(--glow-cyan);
+    animation: pulse-dot 2s ease infinite;
+  }
+  .edu-dot-future { background: rgba(157,78,221,0.3); border: 2px dashed var(--purple); }
+  .edu-line {
+    width: 2px; flex: 1; min-height: 20px;
+    background: linear-gradient(180deg, var(--cyan-dark), rgba(0,245,255,0.1));
+    margin: 4px 0;
+  }
+  .edu-card {
+    flex: 1; background: var(--surface); border: 1px solid var(--border);
+    padding: clamp(16px,2.5vw,28px);
+    margin-bottom: 20px;
+    position: relative; overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .edu-card:hover { border-color: rgba(0,245,255,0.3); box-shadow: 0 0 20px rgba(0,245,255,0.08); }
+  .edu-future .edu-card { border-color: rgba(157,78,221,0.25); }
+  .edu-future .edu-card:hover { border-color: rgba(157,78,221,0.5); box-shadow: var(--glow-purple); }
+  .edu-period {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 8px; flex-wrap: wrap;
+  }
+  .edu-years {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px; color: var(--text-dim); letter-spacing: 1px;
+  }
+  .edu-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px; padding: 2px 8px; border-radius: 2px; letter-spacing: 1px;
+  }
+  .edu-badge-done { background: rgba(0,245,255,0.08); color: var(--cyan); border: 1px solid var(--cyan-dark); }
+  .edu-badge-active { background: rgba(0,255,136,0.1); color: #00ff88; border: 1px solid rgba(0,255,136,0.4); animation: pulse-dot 2s ease infinite; }
+  .edu-badge-future { background: rgba(157,78,221,0.1); color: var(--purple); border: 1px dashed rgba(157,78,221,0.5); }
+  .edu-degree {
+    font-family: 'Orbitron', sans-serif; font-size: clamp(14px,2vw,18px); font-weight: 700;
+    color: var(--text); letter-spacing: 1px; margin-bottom: 6px;
+  }
+  .edu-school {
+    font-family: 'Share Tech Mono', monospace; font-size: 12px;
+    color: var(--cyan); margin-bottom: 10px;
+  }
+  .edu-desc { font-size: 13px; color: var(--text-dim); line-height: 1.6; margin-bottom: 12px; }
+  .edu-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+ 
+  /* ── CERTS ── */
+  #certs { background: var(--bg); }
+  .certs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+    gap: 18px;
+  }
+  @media(max-width:768px) {
+    .certs-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .cert-card { padding: 18px 14px; }
+    .cert-name { font-size: 18px; }
+  }
+  @media(max-width:360px) {
+    .certs-grid { grid-template-columns: 1fr; }
+  }
+  .cert-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 24px 20px;
+    position: relative; overflow: hidden;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: block;
+  }
+  .cert-obtained {
+    border-color: rgba(0,245,255,0.3);
+    cursor: pointer;
+  }
+  .cert-obtained:hover {
+    border-color: var(--cyan);
+    box-shadow: 0 0 30px rgba(0,245,255,0.15), inset 0 0 30px rgba(0,245,255,0.03);
+    transform: translateY(-4px);
+  }
+  .cert-upcoming { opacity: 0.7; cursor: default; }
+  .cert-oscp { border-color: rgba(255,34,68,0.2); }
+  .cert-oscp:hover { opacity: 0.85; }
+  .cert-glow {
+    position: absolute; top: -20px; right: -20px;
+    width: 80px; height: 80px;
+    background: radial-gradient(circle, rgba(0,245,255,0.15), transparent 70%);
+    pointer-events: none;
+  }
+  .cert-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px;
+  }
+  .cert-icon { font-size: 22px; }
+  .cert-status {
+    font-family: 'Share Tech Mono', monospace; font-size: 9px;
+    padding: 2px 7px; border-radius: 2px; letter-spacing: 1px;
+  }
+  .cert-status-done { background: rgba(0,245,255,0.1); color: var(--cyan); border: 1px solid var(--cyan-dark); }
+  .cert-status-soon { background: rgba(157,78,221,0.08); color: var(--purple); border: 1px dashed rgba(157,78,221,0.4); }
+  .cert-name {
+    font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 22px;
+    color: var(--text); letter-spacing: 2px; margin-bottom: 4px;
+  }
+  .cert-obtained .cert-name { color: var(--cyan); text-shadow: 0 0 12px rgba(0,245,255,0.3); }
+  .cert-oscp .cert-name { color: var(--red); text-shadow: 0 0 12px rgba(255,34,68,0.3); }
+  .cert-fullname {
+    font-size: 12px; color: var(--text-dim); margin-bottom: 4px; line-height: 1.4;
+  }
+  .cert-issuer {
+    font-family: 'Share Tech Mono', monospace; font-size: 11px;
+    color: var(--purple); margin-bottom: 14px;
+  }
+  .cert-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 14px; }
+  .cert-verify {
+    font-family: 'Share Tech Mono', monospace; font-size: 11px;
+    color: var(--cyan); letter-spacing: 1px;
+    border-top: 1px solid var(--border); padding-top: 10px; margin-top: 4px;
+  }
+ 
+  /* ── img-notice ── */
+  .img-notice {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; color: var(--purple);
+    text-align: center; padding: 8px 12px;
+    background: rgba(157,78,221,0.08);
+    border: 1px dashed rgba(157,78,221,0.3);
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+ 
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-name">DANIMRTZP</div>
+  <div class="loader-bar-wrap">
+    <div class="loader-bar"></div>
+  </div>
+  <div class="loader-text" id="loader-msg">Initializing...</div>
+  <div class="loader-pct" id="loader-pct">0%</div>
+</div>
+ 
+<!-- SCROLL PROGRESS -->
+<div class="scroll-progress"><div class="scroll-bar" id="scrollBar"></div></div>
+ 
+<!-- NAV -->
+<nav id="navbar">
+  <a class="nav-logo" href="#hero">DANIMRTZP</a>
+  <div class="nav-right">
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#about" data-i18n="nav_about">ABOUT</a></li>
+      <li><a href="#skills" data-i18n="nav_skills">SKILLS</a></li>
+      <li><a href="#projects" data-i18n="nav_projects">PROJECTS</a></li>
+      <li><a href="#terminal-section" data-i18n="nav_terminal">TERMINAL</a></li>
+      <li><a href="#education" data-i18n="nav_education">EDUCACIÓN</a></li>
+      <li><a href="#certs" data-i18n="nav_certs">CERTS</a></li>
+      <li><a href="#blog" data-i18n="nav_blog">BLOG</a></li>
+      <li><a href="#contact" data-i18n="nav_contact">CONTACT</a></li>
+      <li>
+        <div class="lang-switcher">
+          <button class="lang-btn active" onclick="setLang('es')">ES</button>
+          <button class="lang-btn" onclick="setLang('en')">EN</button>
+          <button class="lang-btn" onclick="setLang('ca')">CA</button>
+        </div>
+      </li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+ 
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-avatar-wrap fade-in">
+      <div class="avatar-flip">
+        <!-- CARA FRONTAL: imagen.png -->
+        <div class="avatar-face">
+          <div class="avatar-hexagon">
+            <div class="avatar-placeholder" id="avatarPlaceholder">
+              <img src="imagen.png" alt="danimrtzp avatar" id="avatarImg"
+                onerror="this.style.display='none'; document.getElementById('avatarSvg').style.display='flex';"
+                style="position:absolute;inset:3px;width:calc(100% - 6px);height:calc(100% - 6px);object-fit:cover;object-position:center top;clip-path:polygon(50% 0%,95% 25%,95% 75%,50% 100%,5% 75%,5% 25%);">
+              <svg id="avatarSvg" style="display:none;position:absolute;inset:0;width:100%;height:100%;align-items:center;justify-content:center;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="35" r="18" stroke="#00f5ff" stroke-width="2"/>
+                <path d="M15 85 Q15 60 50 60 Q85 60 85 85" stroke="#00f5ff" stroke-width="2" fill="none"/>
+                <path d="M30 42 Q40 30 60 38" stroke="#9d4edd" stroke-width="1.5" fill="none"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <!-- CARA TRASERA: dani.JPG (tu cara real) -->
+        <div class="avatar-back">
+          <div class="avatar-hexagon">
+            <div class="avatar-placeholder">
+              <img src="dani.JPG" alt="danimrtzp"
+                style="position:absolute;inset:3px;width:calc(100% - 6px);height:calc(100% - 6px);object-fit:cover;object-position:center 20%;clip-path:polygon(50% 0%,95% 25%,95% 75%,50% 100%,5% 75%,5% 25%);">
+            </div>
+          </div>
+        </div>
+        <div class="avatar-ring"></div>
+        <div class="status-dot"></div>
+      </div>
+    </div>
+    <div class="hero-text fade-in">
+      <div class="hero-prefix">// Security Researcher & Developer</div>
+      <h1 class="hero-name glitch" data-text="DANIMRTZP">DANIMRTZP</h1>
+      <div class="hero-subtitle" data-i18n="hero_subtitle">ETHICAL HACKER · BARCELONA</div>
+      <p class="hero-desc" data-i18n="hero_desc">
+        Daniel Martinez Pinedo. 18 años. Programador y hacker ético de Barcelona.
+        Especializado en pentesting, análisis de vulnerabilidades y herramientas de seguridad ofensiva.
+      </p>
+      <div class="hero-tags">
+        <span class="hero-tag tag-cyan">Python</span>
+        <span class="hero-tag tag-cyan">Bash</span>
+        <span class="hero-tag tag-red">CVE Research</span>
+        <span class="hero-tag tag-red">Pentesting</span>
+        <span class="hero-tag tag-purple">Arch Linux</span>
+        <span class="hero-tag tag-purple">CTF Player</span>
+      </div>
+      <div class="hero-btns">
+        <a href="#projects" class="btn btn-primary" data-i18n="hero_btn1">⚡ VER PROYECTOS</a>
+        <a href="#contact" class="btn btn-outline" data-i18n="hero_btn2">↗ CONTACTAR</a>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-wrap">
+    <div class="section-head fade-in">
+      <span class="section-num">01 //</span>
+      <h2 class="section-title" data-i18n="about_title">ABOUT ME</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="about-grid">
+      <div class="about-card fade-in">
+        <h3 data-i18n="about_bio_title">// BIO</h3>
+        <p data-i18n="about_bio_text">
+          Tengo 18 años y soy de Barcelona. Me apasiona la ciberseguridad desde pequeño — empecé con CTFs
+          y acabé construyendo herramientas propias. Creo en el hacking ético como motor del aprendizaje real.
+          Activo en HackTheBox, TryHackMe y The Hackers Labs.
+        </p>
+      </div>
+      <div class="about-card fade-in">
+        <h3>// INFO</h3>
+        <ul class="info-list">
+          <li><span data-i18n="info_name">NOMBRE</span><span>Daniel Martinez Pinedo</span></li>
+          <li><span data-i18n="info_alias">ALIAS</span><span>danimrtzp</span></li>
+          <li><span data-i18n="info_age">EDAD</span><span>18 <span data-i18n="info_years">años</span></span></li>
+          <li><span data-i18n="info_loc">UBICACIÓN</span><span>Barcelona, España 🇪🇸</span></li>
+          <li><span>OS</span><span>Arch Linux + Docker</span></li>
+          <li><span>STATUS</span><span class="term-green">● <span data-i18n="info_status">Activo</span></span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-wrap">
+    <div class="section-head fade-in">
+      <span class="section-num">02 //</span>
+      <h2 class="section-title" data-i18n="skills_title">SKILLS & TOOLS</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-cat fade-in">
+        <div class="skill-cat-icon">🔐</div>
+        <div class="skill-cat-name" data-i18n="sk_security">SECURITY</div>
+        <div class="skill-pills">
+          <span class="pill pill-red"><img src="https://cdn.simpleicons.org/kalilinux/ff2244" alt="">Pentesting</span>
+          <span class="pill pill-red"><img src="https://cdn.simpleicons.org/hackthebox/ff2244" alt="">CTF</span>
+          <span class="pill pill-red"><img src="https://cdn.simpleicons.org/bugcrowd/ff2244" alt="">Exploit Dev</span>
+          <span class="pill pill-red"><img src="https://cdn.simpleicons.org/duckduckgo/ff2244" alt="">OSINT</span>
+          <span class="pill pill-red"><img src="https://cdn.simpleicons.org/cve/ff2244" alt="">CVE Research</span>
+          <span class="pill pill-red"><img src="https://cdn.simpleicons.org/linux/ff2244" alt="">Privesc</span>
+        </div>
+      </div>
+      <div class="skill-cat fade-in">
+        <div class="skill-cat-icon">💻</div>
+        <div class="skill-cat-name" data-i18n="sk_languages">LENGUAJES</div>
+        <div class="skill-pills">
+          <span class="pill pill-cyan"><img src="https://cdn.simpleicons.org/python/00f5ff" alt="">Python</span>
+          <span class="pill pill-cyan"><img src="https://cdn.simpleicons.org/gnubash/00f5ff" alt="">Bash Scripting</span>
+          <span class="pill pill-cyan"><img src="Windows-Dark.svg" alt="">Batch</span>
+          <span class="pill pill-cyan"><img src="https://cdn.simpleicons.org/php/00f5ff" alt="">PHP</span>
+          <span class="pill pill-cyan"><img src="https://cdn.simpleicons.org/mysql/00f5ff" alt="">SQL</span>
+        </div>
+      </div>
+      <div class="skill-cat fade-in">
+        <div class="skill-cat-icon">🛠️</div>
+        <div class="skill-cat-name" data-i18n="sk_tools">HERRAMIENTAS</div>
+        <div class="skill-pills">
+          <span class="pill pill-purple"><img src="https://img.icons8.com/?size=100&id=9b5wowKIlo9d&format=png&color=000000" alt="">Nmap</span>
+          <span class="pill pill-purple"><img src="https://cdn.simpleicons.org/metasploit/9d4edd" alt="">Metasploit</span>
+          <span class="pill pill-purple"><img src="https://cdn.simpleicons.org/burpsuite/9d4edd" alt="">Burp Suite</span>
+          <span class="pill pill-purple"><img src="https://cdn.simpleicons.org/wireshark/9d4edd" alt="">Wireshark</span>
+          <span class="pill pill-purple"><img src="sqlmap-logo.svg" alt="">SQLMap</span>
+          <span class="pill pill-purple"><img src="gobuster-logo.svg" alt="">Gobuster</span>
+          <span class="pill pill-purple"><img src="hydra-logo.svg" alt="">Hydra</span>
+          <span class="pill pill-purple"><img src="john-logo.svg" alt="">John</span>
+        </div>
+      </div>
+      <div class="skill-cat fade-in">
+        <div class="skill-cat-icon">🐧</div>
+        <div class="skill-cat-name" data-i18n="sk_platforms">PLATAFORMAS</div>
+        <div class="skill-pills">
+          <span class="pill pill-cyan"><img src="https://cdn.simpleicons.org/archlinux/00f5ff" alt="">Arch Linux</span>
+          <span class="pill pill-cyan"><img src="https://cdn.simpleicons.org/kalilinux/00f5ff" alt="">Kali Linux</span>
+          <span class="pill pill-cyan"><img src="https://cdn.simpleicons.org/docker/00f5ff" alt="">Docker</span>
+          <span class="pill pill-purple"><img src="logo.png" alt="">DockerLabs</span>
+          <span class="pill pill-purple"><img src="https://cdn.simpleicons.org/hackthebox/9d4edd" alt="">HackTheBox</span>
+          <span class="pill pill-purple"><img src="https://cdn.simpleicons.org/tryhackme/9d4edd" alt="">TryHackMe</span>
+          <span class="pill pill-red"><img src="logo4.png" alt="">The Hackers Labs</span>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- Platform links -->
+    <div class="section-head fade-in" style="margin-top:48px;margin-bottom:24px;">
+      <span class="section-num">02.1 //</span>
+      <h2 class="section-title" style="font-size:18px;" data-i18n="my_profiles">MIS PERFILES</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="platforms-wrap">
+      <a class="platform-card fade-in" href="https://github.com/danimrtzp" target="_blank">
+        <div class="platform-icon"><img src="https://cdn.simpleicons.org/github/00f5ff" style="width:28px;height:28px;" alt="GitHub"></div>
+        <div class="platform-info">
+          <div class="platform-name">GITHUB</div>
+          <div class="platform-user">@danimrtzp</div>
+        </div>
+      </a>
+      <a class="platform-card fade-in" href="https://app.hackthebox.com/public/users/3353901" target="_blank">
+        <div class="platform-icon"><img src="https://cdn.simpleicons.org/hackthebox/00f5ff" style="width:28px;height:28px;" alt="HackTheBox"></div>
+        <div class="platform-info">
+          <div class="platform-name">HACKTHEBOX</div>
+          <div class="platform-user">@danimrtzp</div>
+        </div>
+      </a>
+      <a class="platform-card fade-in" href="https://tryhackme.com/p/isramrtzp" target="_blank">
+        <div class="platform-icon"><img src="https://cdn.simpleicons.org/tryhackme/00f5ff" style="width:28px;height:28px;" alt="TryHackMe"></div>
+        <div class="platform-info">
+          <div class="platform-name">TRYHACKME</div>
+          <div class="platform-user">@isramrtzp</div>
+        </div>
+      </a>
+      <a class="platform-card fade-in" href="https://thehackerslabs.com" target="_blank">
+        <div class="platform-icon"><img src="logo4.png" style="width:28px;height:28px;" alt="The Hackers Labs"></div>
+        <div class="platform-info">
+          <div class="platform-name">THE HACKERS LABS</div>
+          <div class="platform-user">@danimrtzp</div>
+        </div>
+      </a>
+      <a class="platform-card fade-in" href="https://www.linkedin.com/in/daniel-mart%C3%ADnez-pinedo" target="_blank">
+        <div class="platform-icon"><img src="LinkedIn.svg" style="width:28px;height:28px;" alt="LinkedIn"></div>
+        <div class="platform-info">
+          <div class="platform-name">LINKEDIN</div>
+          <div class="platform-user">Daniel Martínez Pinedo</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+ 
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-wrap">
+    <div class="section-head fade-in">
+      <span class="section-num">03 //</span>
+      <h2 class="section-title" data-i18n="proj_title">PROJECTS</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="projects-grid">
+ 
+      <!-- Project 1: dani-scan -->
+      <div class="project-card fade-in">
+        <div class="project-header">
+          <div class="project-name">DANI-SCAN</div>
+          <span class="project-badge badge-bash">BASH</span>
+        </div>
+        <div class="cvss-badge">🔍 Network Scanner v7.0</div>
+        <p class="project-desc" data-i18n="proj1_desc">
+          Herramienta de escaneo de red en Bash puro. Detecta dispositivos activos, identifica SO,
+          fabricante, hostname y servicios. Fingerprinting de Samsung/LG SmartTVs, iPhones con MAC
+          aleatoria, Windows con firewall, distros Linux por banner SSH. Auto-instala dependencias.
+        </p>
+        <div class="project-tags">
+          <span class="pill pill-cyan">Bash</span>
+          <span class="pill pill-red">Network Recon</span>
+          <span class="pill pill-purple">OS Fingerprint</span>
+          <span class="pill pill-cyan">ARP Scan</span>
+          <span class="pill pill-red">Nmap</span>
+        </div>
+        <div class="project-links">
+          <a class="proj-link" href="https://github.com/danimrtzp/dani-scan" target="_blank">
+            ⭐ GitHub
+          </a>
+        </div>
+      </div>
+ 
+      <!-- Project 2: CVE exploit -->
+      <div class="project-card fade-in">
+        <div class="project-header">
+          <div class="project-name">CVE-2026-31431</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <span class="project-badge badge-cve">CVE</span>
+            <span class="project-badge badge-python">PYTHON</span>
+          </div>
+        </div>
+        <div class="cvss-badge">🔴 CVSS 7.8 HIGH · Linux Kernel LPE</div>
+        <p class="project-desc" data-i18n="proj2_desc">
+          FailRoot — exploit para CVE-2026-31431, un out-of-bounds write en el subsistema
+          crypto:algif_aead del kernel Linux. Escala privilegios y lanza una reverse shell root
+          daemonizada con TTY completo. Sin compilación, sin dependencias externas, sin rastro en disco.
+        </p>
+        <div class="project-tags">
+          <span class="pill pill-red">Kernel Exploit</span>
+          <span class="pill pill-red">Privesc</span>
+          <span class="pill pill-purple">Python</span>
+          <span class="pill pill-cyan">AF_ALG</span>
+          <span class="pill pill-red">Reverse Shell</span>
+        </div>
+        <div class="project-links">
+          <a class="proj-link" href="https://github.com/danimrtzp/CVE-2026-31431-REVSHELL" target="_blank">
+            ⭐ GitHub
+          </a>
+        </div>
+      </div>
+ 
+    </div>
+  </div>
+</section>
+ 
+<!-- EDUCATION -->
+<section id="education">
+  <div class="section-wrap">
+    <div class="section-head fade-in">
+      <span class="section-num">04 //</span>
+      <h2 class="section-title" data-i18n="edu_title">EDUCACIÓN</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="edu-timeline">
+ 
+      <!-- Future -->
+      <div class="edu-item fade-in edu-future">
+        <div class="edu-connector">
+          <div class="edu-dot edu-dot-future"></div>
+          <div class="edu-line"></div>
+        </div>
+        <div class="edu-card">
+          <div class="edu-period">
+            <span class="edu-years">2027 — 2031</span>
+            <span class="edu-badge edu-badge-future" data-i18n="edu_soon">PRÓXIMAMENTE</span>
+          </div>
+          <div class="edu-degree" data-i18n="edu3_degree">Grado en Ciberseguridad</div>
+          <div class="edu-school">🎓 Universitat de Barcelona (UB)</div>
+          <div class="edu-desc" data-i18n="edu3_desc">Formación universitaria en ciberseguridad, criptografía, redes y sistemas de información.</div>
+          <div class="edu-tags">
+            <span class="pill pill-purple">Universidad</span>
+            <span class="pill pill-red">Ciberseguridad</span>
+            <span class="pill pill-cyan">UB</span>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- ASIX -->
+      <div class="edu-item fade-in">
+        <div class="edu-connector">
+          <div class="edu-dot edu-dot-active"></div>
+          <div class="edu-line"></div>
+        </div>
+        <div class="edu-card">
+          <div class="edu-period">
+            <span class="edu-years">2025 — 2027</span>
+            <span class="edu-badge edu-badge-active" data-i18n="edu_current">EN CURSO</span>
+          </div>
+          <div class="edu-degree" data-i18n="edu2_degree">Grado Superior — ASIX</div>
+          <div class="edu-school">🏫 IFP — Innovació i Formació Professional</div>
+          <div class="edu-desc" data-i18n="edu2_desc">Administración de Sistemas Informáticos en Red. Redes, servidores, virtualización, seguridad y administración de sistemas Linux/Windows.</div>
+          <div class="edu-tags">
+            <span class="pill pill-cyan">Redes</span>
+            <span class="pill pill-cyan">Linux</span>
+            <span class="pill pill-purple">Virtualización</span>
+            <span class="pill pill-red">Seguridad</span>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- SMIX -->
+      <div class="edu-item fade-in">
+        <div class="edu-connector">
+          <div class="edu-dot edu-dot-done"></div>
+        </div>
+        <div class="edu-card">
+          <div class="edu-period">
+            <span class="edu-years">2023 — 2025</span>
+            <span class="edu-badge edu-badge-done" data-i18n="edu_done">COMPLETADO</span>
+          </div>
+          <div class="edu-degree" data-i18n="edu1_degree">Grado Medio — SMIX</div>
+          <div class="edu-school">🏫 Institut Pedralbes — Barcelona</div>
+          <div class="edu-desc" data-i18n="edu1_desc">Sistemas Microinformáticos y Redes. Fundamentos de hardware, redes, sistemas operativos y mantenimiento de equipos informáticos.</div>
+          <div class="edu-tags">
+            <span class="pill pill-cyan">Hardware</span>
+            <span class="pill pill-cyan">Redes</span>
+            <span class="pill pill-purple">Windows</span>
+            <span class="pill pill-purple">Linux</span>
+          </div>
+        </div>
+      </div>
+ 
+    </div>
+  </div>
+</section>
+ 
+<!-- CERTS -->
+<section id="certs">
+  <div class="section-wrap">
+    <div class="section-head fade-in">
+      <span class="section-num">05 //</span>
+      <h2 class="section-title" data-i18n="certs_title">CERTIFICACIONES</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="certs-grid">
+ 
+      <!-- eJPTv2 — obtenida -->
+      <a class="cert-card fade-in cert-obtained" href="https://certs.ine.com/eb2b98db-1625-44ba-9a05-b737767277a9#acc.NIjXil91" target="_blank">
+        <div class="cert-glow"></div>
+        <div class="cert-header">
+          <div class="cert-icon">🎯</div>
+          <div class="cert-status cert-status-done">✓ OBTENIDA</div>
+        </div>
+        <div class="cert-name">eJPTv2</div>
+        <div class="cert-fullname">Junior Penetration Tester</div>
+        <div class="cert-issuer">INE Security</div>
+        <div class="cert-tags">
+          <span class="pill pill-cyan">Pentesting</span>
+          <span class="pill pill-red">Network</span>
+          <span class="pill pill-purple">Web</span>
+        </div>
+        <div class="cert-verify" data-i18n="cert_verify">↗ Verificar credencial</div>
+      </a>
+ 
+      <!-- CRTE — próximamente -->
+      <div class="cert-card fade-in cert-upcoming">
+        <div class="cert-header">
+          <div class="cert-icon">🔜</div>
+          <div class="cert-status cert-status-soon" data-i18n="cert_soon">PRÓXIMAMENTE</div>
+        </div>
+        <div class="cert-name">CRTA</div>
+        <div class="cert-fullname">Certified Red Team Analyst</div>
+        <div class="cert-issuer">Altered Security</div>
+        <div class="cert-tags">
+          <span class="pill pill-red">Red Team</span>
+          <span class="pill pill-purple">AD</span>
+        </div>
+      </div>
+ 
+      <!-- AD-RTS -->
+      <div class="cert-card fade-in cert-upcoming">
+        <div class="cert-header">
+          <div class="cert-icon">🔜</div>
+          <div class="cert-status cert-status-soon" data-i18n="cert_soon">PRÓXIMAMENTE</div>
+        </div>
+        <div class="cert-name">AD-RTS</div>
+        <div class="cert-fullname">Active Directory Red Team Specialist</div>
+        <div class="cert-issuer">CWL</div>
+        <div class="cert-tags">
+          <span class="pill pill-red">Active Directory</span>
+          <span class="pill pill-purple">Windows</span>
+        </div>
+      </div>
+ 
+      <!-- CJCA -->
+      <div class="cert-card fade-in cert-upcoming">
+        <div class="cert-header">
+          <div class="cert-icon">🔜</div>
+          <div class="cert-status cert-status-soon" data-i18n="cert_soon">PRÓXIMAMENTE</div>
+        </div>
+        <div class="cert-name">CJCA</div>
+        <div class="cert-fullname">Certified Junior Cybersecurity Analyst</div>
+        <div class="cert-issuer">INE Security</div>
+        <div class="cert-tags">
+          <span class="pill pill-cyan">SOC</span>
+          <span class="pill pill-purple">Blue Team</span>
+        </div>
+      </div>
+ 
+      <!-- OSCP -->
+      <div class="cert-card fade-in cert-upcoming cert-oscp">
+        <div class="cert-header">
+          <div class="cert-icon">💀</div>
+          <div class="cert-status cert-status-soon" data-i18n="cert_soon">PRÓXIMAMENTE</div>
+        </div>
+        <div class="cert-name">OSCP</div>
+        <div class="cert-fullname">Offensive Security Certified Professional</div>
+        <div class="cert-issuer">OffSec</div>
+        <div class="cert-tags">
+          <span class="pill pill-red">Pentesting</span>
+          <span class="pill pill-red">Exploit</span>
+          <span class="pill pill-purple">Gold Standard</span>
+        </div>
+      </div>
+ 
+    </div>
+  </div>
+</section>
+ 
+<!-- TERMINAL -->
+<section id="terminal-section">
+  <div class="section-wrap">
+    <div class="section-head fade-in">
+      <span class="section-num">06 //</span>
+      <h2 class="section-title" data-i18n="term_title">TERMINAL</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="terminal-wrap fade-in">
+      <div class="term-titlebar">
+        <div class="term-dot term-dot-r"></div>
+        <div class="term-dot term-dot-y"></div>
+        <div class="term-dot term-dot-g"></div>
+        <div class="term-title">danimrtzp@archlinux: ~</div>
+      </div>
+      <div class="term-body" id="termBody">
+        <div class="term-output" id="termOutput"></div>
+        <div class="term-input-row">
+          <span class="term-prompt"><span>danimrtzp</span>@archlinux:~$&nbsp;</span>
+          <input class="term-input" id="termInput" type="text" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="escribe un comando...">
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:12px;">
+      <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim);" data-i18n="term_hint">
+        💡 Prueba: <span style="color:var(--cyan)">help</span> · <span style="color:var(--cyan)">whoami</span> · <span style="color:var(--cyan)">skills</span> · <span style="color:var(--cyan)">projects</span> · <span style="color:var(--cyan)">contact</span>
+      </span>
+    </div>
+  </div>
+</section>
+ 
+<!-- BLOG -->
+<section id="blog">
+  <div class="section-wrap">
+    <div class="section-head fade-in">
+      <span class="section-num">07 //</span>
+      <h2 class="section-title" data-i18n="blog_title">BLOG</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="blog-grid">
+      <div class="blog-card fade-in">
+        <div class="blog-date">2026-06-01</div>
+        <div class="blog-title" data-i18n="blog1_title">CVE-2026-31431: Análisis del Bug</div>
+        <p class="blog-preview" data-i18n="blog1_prev">
+          Deep dive en el out-of-bounds write de algif_aead. Cómo encontré el gadget y encadené el LPE con una reverse shell sin dejar rastro.
+        </p>
+        <div class="blog-tags">
+          <span class="pill pill-red">CVE</span>
+          <span class="pill pill-purple">Kernel</span>
+          <span class="pill pill-cyan">Exploit</span>
+        </div>
+      </div>
+      <div class="blog-card fade-in">
+        <div class="blog-date">2026-05-15</div>
+        <div class="blog-title" data-i18n="blog2_title">DANI-SCAN: De Script a Herramienta</div>
+        <p class="blog-preview" data-i18n="blog2_prev">
+          Por qué TTL-first es la clave para detectar Windows con firewall activo. El proceso de construir un scanner de OS fingerprinting en Bash puro.
+        </p>
+        <div class="blog-tags">
+          <span class="pill pill-cyan">Bash</span>
+          <span class="pill pill-red">Recon</span>
+          <span class="pill pill-purple">Tool Dev</span>
+        </div>
+      </div>
+      <div class="blog-card fade-in">
+        <div class="blog-date">2026-04-20</div>
+        <div class="blog-title" data-i18n="blog3_title">CTF Writeup: DockerLabs</div>
+        <p class="blog-preview" data-i18n="blog3_prev">
+          Writeup completo de una máquina de DockerLabs: enumeración, explotación de SQL Injection y escalada de privilegios con sudo misconfig.
+        </p>
+        <div class="blog-tags">
+          <span class="pill pill-purple">CTF</span>
+          <span class="pill pill-red">SQLi</span>
+          <span class="pill pill-cyan">Privesc</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-wrap">
+    <div class="section-head fade-in">
+      <span class="section-num">08 //</span>
+      <h2 class="section-title" data-i18n="contact_title">CONTACT</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="contact-links-only fade-in">
+      <a class="contact-link" href="https://github.com/danimrtzp" target="_blank">
+        <div class="contact-link-icon"><img src="https://cdn.simpleicons.org/github/00f5ff" style="width:24px;height:24px;" alt="GitHub"></div>
+        <div class="contact-link-info">
+          <div class="contact-link-name">GITHUB</div>
+          <div class="contact-link-val">github.com/danimrtzp</div>
+        </div>
+      </a>
+      <a class="contact-link" href="https://www.linkedin.com/in/daniel-mart%C3%ADnez-pinedo" target="_blank">
+        <div class="contact-link-icon"><img src="LinkedIn.svg" style="width:24px;height:24px;" alt="LinkedIn"></div>
+        <div class="contact-link-info">
+          <div class="contact-link-name">LINKEDIN</div>
+          <div class="contact-link-val">daniel-martínez-pinedo</div>
+        </div>
+      </a>
+      <a class="contact-link" href="https://app.hackthebox.com/public/users/3353901" target="_blank">
+        <div class="contact-link-icon"><img src="https://cdn.simpleicons.org/hackthebox/00f5ff" style="width:24px;height:24px;" alt="HackTheBox"></div>
+        <div class="contact-link-info">
+          <div class="contact-link-name">HACKTHEBOX</div>
+          <div class="contact-link-val">@danimrtzp</div>
+        </div>
+      </a>
+      <a class="contact-link" href="https://tryhackme.com/p/isramrtzp" target="_blank">
+        <div class="contact-link-icon"><img src="https://cdn.simpleicons.org/tryhackme/00f5ff" style="width:24px;height:24px;" alt="TryHackMe"></div>
+        <div class="contact-link-info">
+          <div class="contact-link-name">TRYHACKME</div>
+          <div class="contact-link-val">@isramrtzp</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+ 
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DANIMRTZP</div>
+  <div class="footer-text" data-i18n="footer_text">// Daniel Martinez Pinedo · Security Researcher · Barcelona 🇪🇸</div>
+  <div class="footer-text" style="color:var(--purple);">2026</div>
+</footer>
+ 
+<script>
+// ─── i18n ───────────────────────────────────────────────────────
+const i18n = {
+  es: {
+    nav_about:'SOBRE MÍ', nav_skills:'SKILLS', nav_projects:'PROYECTOS',
+    nav_terminal:'TERMINAL', nav_blog:'BLOG', nav_contact:'CONTACTO',
+    nav_education:'EDUCACIÓN', nav_certs:'CERTS',
+    hero_subtitle:'HACKER ÉTICO · BARCELONA',
+    hero_desc:'Daniel Martinez Pinedo. 18 años. Programador y hacker ético de Barcelona. Especializado en pentesting, análisis de vulnerabilidades y herramientas de seguridad ofensiva.',
+    hero_btn1:'⚡ VER PROYECTOS', hero_btn2:'↗ CONTACTAR',
+    about_title:'SOBRE MÍ',
+    about_bio_title:'// SOBRE MÍ',
+    about_bio_text:'Tengo 18 años y soy de Barcelona. Me apasiona la ciberseguridad desde pequeño — empecé con CTFs y acabé construyendo herramientas propias. Creo en el hacking ético como motor del aprendizaje real. Activo en HackTheBox, TryHackMe y The Hackers Labs.',
+    info_name:'NOMBRE', info_alias:'ALIAS', info_age:'EDAD', info_years:'años',
+    info_loc:'UBICACIÓN', info_status:'Activo',
+    skills_title:'SKILLS & TOOLS', sk_security:'SEGURIDAD', sk_languages:'LENGUAJES',
+    sk_tools:'HERRAMIENTAS', sk_platforms:'PLATAFORMAS', my_profiles:'MIS PERFILES',
+    proj_title:'PROYECTOS',
+    proj1_desc:'Herramienta de escaneo de red en Bash puro. Detecta dispositivos activos, identifica SO, fabricante, hostname y servicios. Fingerprinting de Samsung/LG SmartTVs, iPhones con MAC aleatoria, Windows con firewall, distros Linux por banner SSH. Auto-instala dependencias.',
+    proj2_desc:'FailRoot — exploit para CVE-2026-31431, un out-of-bounds write en el subsistema crypto:algif_aead del kernel Linux. Escala privilegios y lanza una reverse shell root daemonizada con TTY completo. Sin compilación, sin dependencias externas, sin rastro en disco.',
+    term_title:'TERMINAL',
+    term_hint:'💡 Prueba: help · whoami · skills · projects · contact',
+    blog_title:'BLOG',
+    blog1_title:'CVE-2026-31431: Análisis del Bug',
+    blog1_prev:'Deep dive en el out-of-bounds write de algif_aead. Cómo encontré el gadget y encadené el LPE con una reverse shell sin dejar rastro.',
+    blog2_title:'DANI-SCAN: De Script a Herramienta',
+    blog2_prev:'Por qué TTL-first es la clave para detectar Windows con firewall activo. El proceso de construir un scanner de OS fingerprinting en Bash puro.',
+    blog3_title:'CTF Writeup: DockerLabs',
+    blog3_prev:'Writeup completo de una máquina de DockerLabs: enumeración, explotación de SQL Injection y escalada de privilegios con sudo misconfig.',
+    edu_title:'EDUCACIÓN', edu_soon:'PRÓXIMAMENTE', edu_current:'EN CURSO', edu_done:'COMPLETADO',
+    edu1_degree:'Grado Medio — SMIX', edu1_desc:'Sistemas Microinformáticos y Redes. Fundamentos de hardware, redes, sistemas operativos y mantenimiento de equipos informáticos.',
+    edu2_degree:'Grado Superior — ASIX', edu2_desc:'Administración de Sistemas Informáticos en Red. Redes, servidores, virtualización, seguridad y administración de sistemas Linux/Windows.',
+    edu3_degree:'Grado en Ciberseguridad', edu3_desc:'Formación universitaria en ciberseguridad, criptografía, redes y sistemas de información.',
+    certs_title:'CERTIFICACIONES', cert_verify:'↗ Verificar credencial', cert_soon:'PRÓXIMAMENTE',
+    contact_title:'CONTACTO',
+    form_name:'// NOMBRE', form_email:'// EMAIL', form_msg:'// MENSAJE', form_send:'⚡ ENVIAR',
+    footer_text:'// Daniel Martinez Pinedo · Security Researcher · Barcelona 🇪🇸',
+  },
+  en: {
+    nav_about:'ABOUT', nav_skills:'SKILLS', nav_projects:'PROJECTS',
+    nav_terminal:'TERMINAL', nav_blog:'BLOG', nav_contact:'CONTACT',
+    nav_education:'EDUCATION', nav_certs:'CERTS',
+    hero_subtitle:'ETHICAL HACKER · BARCELONA',
+    hero_desc:'Daniel Martinez Pinedo. 18 years old. Developer and ethical hacker from Barcelona. Specialized in pentesting, vulnerability research and offensive security tools.',
+    hero_btn1:'⚡ VIEW PROJECTS', hero_btn2:'↗ CONTACT ME',
+    about_title:'ABOUT ME',
+    about_bio_title:'// ABOUT ME',
+    about_bio_text:'I am 18 years old and from Barcelona. I\'ve been passionate about cybersecurity since I was young — started with CTFs and ended up building my own tools. I believe ethical hacking is the engine of real learning. Active on HackTheBox, TryHackMe and The Hackers Labs.',
+    info_name:'NAME', info_alias:'ALIAS', info_age:'AGE', info_years:'years old',
+    info_loc:'LOCATION', info_status:'Active',
+    skills_title:'SKILLS & TOOLS', sk_security:'SECURITY', sk_languages:'LANGUAGES',
+    sk_tools:'TOOLS', sk_platforms:'PLATFORMS', my_profiles:'MY PROFILES',
+    proj_title:'PROJECTS',
+    proj1_desc:'Pure Bash network scanning tool. Detects active devices, identifies OS, manufacturer, hostname and services. Fingerprinting of Samsung/LG SmartTVs, iPhones with random MAC, Windows with firewall, Linux distros via SSH banner. Auto-installs dependencies.',
+    proj2_desc:'FailRoot — exploit for CVE-2026-31431, an out-of-bounds write in the Linux kernel\'s crypto:algif_aead subsystem. Escalates privileges and launches a daemonized root reverse shell with full TTY. No compilation, no external dependencies, no disk traces.',
+    term_title:'TERMINAL',
+    term_hint:'💡 Try: help · whoami · skills · projects · contact',
+    blog_title:'BLOG',
+    blog1_title:'CVE-2026-31431: Bug Analysis',
+    blog1_prev:'Deep dive into the algif_aead out-of-bounds write. How I found the gadget and chained the LPE with a traceless reverse shell.',
+    blog2_title:'DANI-SCAN: From Script to Tool',
+    blog2_prev:'Why TTL-first is the key to detecting Windows with active firewall. The process of building an OS fingerprinting scanner in pure Bash.',
+    blog3_title:'CTF Writeup: DockerLabs',
+    blog3_prev:'Full writeup of a DockerLabs machine: enumeration, SQL Injection exploitation and privilege escalation via sudo misconfiguration.',
+    edu_title:'EDUCATION', edu_soon:'COMING SOON', edu_current:'IN PROGRESS', edu_done:'COMPLETED',
+    edu1_degree:'Vocational Training — SMX', edu1_desc:'Microcomputer Systems and Networks. Fundamentals of hardware, networking, operating systems and IT equipment maintenance.',
+    edu2_degree:'Higher Vocational Training — ASIX', edu2_desc:'Network Computer Systems Administration. Networks, servers, virtualization, security and Linux/Windows system administration.',
+    edu3_degree:'Degree in Cybersecurity', edu3_desc:'University education in cybersecurity, cryptography, networks and information systems.',
+    certs_title:'CERTIFICATIONS', cert_verify:'↗ Verify credential', cert_soon:'COMING SOON',
+    contact_title:'CONTACT',
+    form_name:'// NAME', form_email:'// EMAIL', form_msg:'// MESSAGE', form_send:'⚡ SEND',
+    footer_text:'// Daniel Martinez Pinedo · Security Researcher · Barcelona 🇪🇸',
+  },
+  ca: {
+    nav_about:'SOBRE MI', nav_skills:'SKILLS', nav_projects:'PROJECTES',
+    nav_terminal:'TERMINAL', nav_blog:'BLOG', nav_contact:'CONTACTE',
+    nav_education:'EDUCACIÓ', nav_certs:'CERTS',
+    hero_subtitle:'HACKER ÈTIC · BARCELONA',
+    hero_desc:'Daniel Martinez Pinedo. 18 anys. Programador i hacker ètic de Barcelona. Especialitzat en pentesting, anàlisi de vulnerabilitats i eines de seguretat ofensiva.',
+    hero_btn1:'⚡ VEURE PROJECTES', hero_btn2:'↗ CONTACTAR',
+    about_title:'SOBRE MI',
+    about_bio_title:'// SOBRE MI',
+    about_bio_text:'Tinc 18 anys i sóc de Barcelona. M\'apassiona la ciberseguretat des de petit — vaig començar amb CTFs i vaig acabar construint les meves pròpies eines. Crec que el hacking ètic és el motor de l\'aprenentatge real. Actiu a HackTheBox, TryHackMe i The Hackers Labs.',
+    info_name:'NOM', info_alias:'ALIAS', info_age:'EDAT', info_years:'anys',
+    info_loc:'UBICACIÓ', info_status:'Actiu',
+    skills_title:'SKILLS & EINES', sk_security:'SEGURETAT', sk_languages:'LLENGUATGES',
+    sk_tools:'EINES', sk_platforms:'PLATAFORMES', my_profiles:'ELS MEUS PERFILS',
+    proj_title:'PROJECTES',
+    proj1_desc:'Eina d\'escaneig de xarxa en Bash pur. Detecta dispositius actius, identifica SO, fabricant, hostname i serveis. Fingerprinting de Samsung/LG SmartTVs, iPhones amb MAC aleatòria, Windows amb firewall, distros Linux per banner SSH. Auto-instal·la dependències.',
+    proj2_desc:'FailRoot — exploit per CVE-2026-31431, un out-of-bounds write al subsistema crypto:algif_aead del kernel Linux. Escala privilegis i llança una reverse shell root daemonitzada amb TTY complet. Sense compilació, sense dependències externes, sense rastre al disc.',
+    term_title:'TERMINAL',
+    term_hint:'💡 Prova: help · whoami · skills · projects · contact',
+    blog_title:'BLOG',
+    blog1_title:'CVE-2026-31431: Anàlisi del Bug',
+    blog1_prev:'Deep dive en l\'out-of-bounds write d\'algif_aead. Com vaig trobar el gadget i vaig encadenar el LPE amb una reverse shell sense deixar rastre.',
+    blog2_title:'DANI-SCAN: De Script a Eina',
+    blog2_prev:'Per què TTL-first és la clau per detectar Windows amb firewall actiu. El procés de construir un scanner d\'OS fingerprinting en Bash pur.',
+    blog3_title:'CTF Writeup: DockerLabs',
+    blog3_prev:'Writeup complet d\'una màquina de DockerLabs: enumeració, explotació de SQL Injection i escalada de privilegis amb sudo misconfig.',
+    edu_title:'EDUCACIÓ', edu_soon:'PRÒXIMAMENT', edu_current:'EN CURS', edu_done:'COMPLETAT',
+    edu1_degree:'Grau Mitjà — SMX', edu1_desc:'Sistemes Microinformàtics i Xarxes. Fonaments de maquinari, xarxes, sistemes operatius i manteniment d\'equips informàtics.',
+    edu2_degree:'Grau Superior — ASIX', edu2_desc:'Administració de Sistemes Informàtics en Xarxa. Xarxes, servidors, virtualització, seguretat i administració de sistemes Linux/Windows.',
+    edu3_degree:'Grau en Ciberseguretat', edu3_desc:'Formació universitària en ciberseguretat, criptografia, xarxes i sistemes d\'informació.',
+    certs_title:'CERTIFICACIONS', cert_verify:'↗ Verificar credencial', cert_soon:'PRÒXIMAMENT',
+    contact_title:'CONTACTE',
+    form_name:'// NOM', form_email:'// EMAIL', form_msg:'// MISSATGE', form_send:'⚡ ENVIAR',
+    footer_text:'// Daniel Martinez Pinedo · Security Researcher · Barcelona 🇪🇸',
+  }
+};
+ 
+let currentLang = 'es';
+ 
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (i18n[lang][key]) el.textContent = i18n[lang][key];
+  });
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent === lang.toUpperCase());
+  });
+  document.documentElement.lang = lang;
+}
+ 
+// ─── LOADER ─────────────────────────────────────────────────────
+const loaderMsgs = [
+  ['Initializing kernel modules...', 5],
+  ['Loading exploit framework...', 15],
+  ['Scanning local network...', 28],
+  ['Bypassing firewall rules...', 42],
+  ['Establishing secure connection...', 58],
+  ['Decrypting payload...', 71],
+  ['Mounting root filesystem...', 85],
+  ['Access granted. Welcome, danimrtzp.', 100],
+];
+ 
+let msgIdx = 0;
+const loaderMsg = document.getElementById('loader-msg');
+const loaderPct = document.getElementById('loader-pct');
+ 
+function animateLoader() {
+  if (msgIdx >= loaderMsgs.length) return;
+  const [msg, pct] = loaderMsgs[msgIdx];
+  loaderMsg.textContent = msg;
+  loaderPct.textContent = pct + '%';
+  msgIdx++;
+  if (msgIdx < loaderMsgs.length) {
+    setTimeout(animateLoader, 260 + Math.random() * 120);
+  }
+}
+animateLoader();
+ 
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const loader = document.getElementById('loader');
+    loader.style.transition = 'opacity 0.6s';
+    loader.style.opacity = '0';
+    setTimeout(() => loader.remove(), 700);
+    initTerminal();
+    initScrollEffects();
+  }, 2400);
+});
+ 
+// ─── HAMBURGER ──────────────────────────────────────────────────
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+document.querySelectorAll('.nav-links a').forEach(a => {
+  a.addEventListener('click', () => {
+    document.getElementById('navLinks').classList.remove('open');
+  });
+});
+ 
+// ─── SCROLL PROGRESS ────────────────────────────────────────────
+function initScrollEffects() {
+  const bar = document.getElementById('scrollBar');
+  window.addEventListener('scroll', () => {
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (window.scrollY / total * 100) + '%';
+  }, { passive: true });
+ 
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+}
+ 
+// ─── TERMINAL ───────────────────────────────────────────────────
+function initTerminal() {
+  const output = document.getElementById('termOutput');
+  const input = document.getElementById('termInput');
+  const body = document.getElementById('termBody');
+  let history = [];
+  let histIdx = -1;
+ 
+  const banner = `<span class="term-cyan">┌─────────────────────────────────────────────────┐</span>
+<span class="term-cyan">│</span>  <span class="term-purple">danimrtzp@archlinux</span> — <span class="term-red">Security Terminal v1.0</span>  <span class="term-cyan">│</span>
+<span class="term-cyan">└─────────────────────────────────────────────────┘</span>
+<span class="term-green">●</span> Sistema operativo: <span class="term-cyan">Arch Linux</span> <span class="term-green">●</span> Fecha: <span class="term-cyan">${new Date().toLocaleDateString('es-ES')}</span>
+<span class="term-green">●</span> Escribe <span class="term-cyan">help</span> para ver los comandos disponibles.
+`;
+ 
+  addOutput(banner);
+ 
+  const commands = {
+    help: () => `<span class="term-cyan">Comandos disponibles:</span>
+  <span class="term-purple">whoami</span>        — Información personal
+  <span class="term-purple">skills</span>        — Stack tecnológico
+  <span class="term-purple">projects</span>      — Proyectos públicos
+  <span class="term-purple">platforms</span>     — Perfiles en plataformas
+  <span class="term-purple">contact</span>       — Información de contacto
+  <span class="term-purple">github</span>        — Abrir GitHub
+  <span class="term-purple">clear</span>         — Limpiar terminal
+  <span class="term-purple">date</span>          — Fecha actual
+  <span class="term-purple">uname -a</span>      — Info del sistema
+  <span class="term-purple">ls</span>            — Listar archivos
+  <span class="term-purple">cat flag.txt</span>  — ??`,
+ 
+    whoami: () => `<span class="term-cyan">Daniel Martinez Pinedo</span> · <span class="term-purple">danimrtzp</span>
+<span class="term-green">●</span> 18 años — Barcelona, España 🇪🇸
+<span class="term-green">●</span> Rol: Programador & Ethical Hacker
+<span class="term-green">●</span> OS: Arch Linux | Docker
+<span class="term-green">●</span> Lenguajes: Python, Bash, Batch, PHP, SQL
+<span class="term-green">●</span> Foco: Pentesting, CVE Research, CTF`,
+ 
+    skills: () => `<span class="term-cyan">── SECURITY ──────────────────────────────</span>
+  Pentesting · CTF · Exploit Dev · OSINT · CVE Research · Privesc
+<span class="term-cyan">── LANGUAGES ─────────────────────────────</span>
+  Python · Bash Scripting · Batch · PHP · SQL
+<span class="term-cyan">── TOOLS ─────────────────────────────────</span>
+  Nmap · Metasploit · Burp Suite · Wireshark · SQLMap · Gobuster · Hydra
+<span class="term-cyan">── PLATFORMS ─────────────────────────────</span>
+  Arch Linux · Kali · Docker · DockerLabs · HackTheBox · TryHackMe`,
+ 
+    projects: () => `<span class="term-cyan">── PROYECTOS PÚBLICOS ────────────────────────</span>
+<span class="term-red">[1]</span> <span class="term-purple">DANI-SCAN</span> · Bash Network Scanner
+     <span class="term-green">→</span> github.com/danimrtzp/dani-scan
+ 
+<span class="term-red">[2]</span> <span class="term-purple">CVE-2026-31431-REVSHELL</span> · Linux Kernel LPE Exploit
+     CVSS 7.8 HIGH · Python · crypto:algif_aead
+     <span class="term-green">→</span> github.com/danimrtzp/CVE-2026-31431-REVSHELL`,
+ 
+    platforms: () => `<span class="term-cyan">── PERFILES ──────────────────────────────</span>
+  GitHub:          <span class="term-purple">github.com/danimrtzp</span>
+  HackTheBox:      <span class="term-red">@danimrtzp</span>
+  TryHackMe:       <span class="term-red">@isramrtzp</span>
+  The Hackers Labs: <span class="term-red">@danimrtzp</span>
+  LinkedIn:        <span class="term-cyan">daniel-martínez-pinedo</span>`,
+ 
+    contact: () => `<span class="term-cyan">── CONTACTO ──────────────────────────────</span>
+  GitHub:    <span class="term-purple">github.com/danimrtzp</span>
+  LinkedIn:  <span class="term-cyan">linkedin.com/in/daniel-martínez-pinedo</span>
+  HTB:       <span class="term-red">@danimrtzp</span>
+  THM:       <span class="term-red">@isramrtzp</span>`,
+ 
+    github: () => {
+      window.open('https://github.com/danimrtzp', '_blank');
+      return '<span class="term-green">Abriendo GitHub en nueva pestaña...</span>';
+    },
+ 
+    date: () => `<span class="term-cyan">${new Date().toString()}</span>`,
+ 
+    'uname -a': () => `<span class="term-cyan">Linux</span> danimrtzp-pc 6.12.0-arch1-1 #1 SMP PREEMPT_DYNAMIC x86_64 GNU/Linux`,
+ 
+    ls: () => `<span class="term-cyan">drwxr-xr-x</span>  tools/
+<span class="term-cyan">drwxr-xr-x</span>  exploits/
+<span class="term-cyan">drwxr-xr-x</span>  ctf/
+<span class="term-red">-rwxr-xr-x</span>  dani-scan.sh
+<span class="term-purple">-rw-r--r--</span>  exploit.py
+<span class="term-green">-r--------</span>  flag.txt`,
+ 
+    'cat flag.txt': () => `<span class="term-red">cat: flag.txt: Permission denied</span>
+<span class="term-green">Hint: Try privilege escalation first 😉</span>`,
+ 
+    clear: () => { output.innerHTML = ''; return null; },
+  };
+ 
+  function addOutput(html) {
+    const div = document.createElement('div');
+    div.className = 'term-line term-response';
+    div.innerHTML = html;
+    output.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+  }
+ 
+  function addPrompt(cmd) {
+    const div = document.createElement('div');
+    div.className = 'term-line';
+    div.innerHTML = `<span class="term-prompt"><span>danimrtzp</span>@archlinux:~$</span> <span style="color:var(--text)">${cmd}</span>`;
+    output.appendChild(div);
+  }
+ 
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const cmd = input.value.trim();
+      input.value = '';
+      histIdx = -1;
+      if (!cmd) return;
+      history.unshift(cmd);
+      addPrompt(cmd);
+      const fn = commands[cmd.toLowerCase()];
+      if (fn) {
+        const result = fn();
+        if (result !== null && result !== undefined) addOutput(result);
+      } else {
+        addOutput(`<span class="term-red">bash: ${cmd}: command not found</span>`);
+      }
+      body.scrollTop = body.scrollHeight;
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (histIdx < history.length - 1) {
+        histIdx++;
+        input.value = history[histIdx];
+      }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (histIdx > 0) { histIdx--; input.value = history[histIdx]; }
+      else { histIdx = -1; input.value = ''; }
+    }
+  });
+ 
+  // Focus terminal on click
+  document.getElementById('termBody').addEventListener('click', () => input.focus());
+}
+ 
+// ─── CONTACT FORM ───────────────────────────────────────────────
+function sendContact() {
+  const name = document.getElementById('fname').value.trim();
+  const email = document.getElementById('femail').value.trim();
+  const msg = document.getElementById('fmsg').value.trim();
+  const fb = document.getElementById('formFeedback');
+ 
+  if (!name || !email || !msg) {
+    fb.style.color = 'var(--red)';
+    fb.textContent = '// Error: todos los campos son requeridos.';
+    return;
+  }
+  fb.style.color = 'var(--cyan)';
+  fb.textContent = '// Mensaje enviado. Responderé pronto.';
+  setTimeout(() => { fb.textContent = ''; }, 4000);
+}
+ 
+// ─── SMOOTH SCROLL ──────────────────────────────────────────────
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const id = a.getAttribute('href').slice(1);
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+</body>
+</html>
