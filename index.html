@@ -1041,12 +1041,13 @@
   }
  
 
-  /* ── SPOTLIGHT + TILT EFFECT ── */
+  /* ── SPOTLIGHT + 3D TILT EFFECT ── */
   .spotlight {
     position: relative;
     overflow: hidden;
     transform-style: preserve-3d;
-    perspective: 1000px;
+    will-change: transform;
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s, border-color 0.3s;
   }
   .spotlight::after {
     content: '';
@@ -1063,11 +1064,10 @@
     opacity: 1;
   }
   .spotlight:hover {
-    transform: translateY(-6px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
     box-shadow: 0 0 40px rgba(0,245,255,0.15), 0 0 80px rgba(157,78,221,0.08);
   }
   .about-card, .skill-cat, .project-card, .blog-card, .cert-card, .edu-card, .learn-card, .platform-card, .contact-link {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s, border-color 0.3s;
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s, border-color 0.3s;
   }
   .about-card:hover, .skill-cat:hover, .project-card:hover, .blog-card:hover, .cert-obtained:hover, .edu-card:hover, .learn-card:hover, .platform-card:hover, .contact-link:hover {
     transform: translateY(-6px);
@@ -2647,7 +2647,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   const cards = document.querySelectorAll('.spotlight');
   if (!cards.length) return;
   
-  // Check for touch device
   const isTouch = window.matchMedia('(hover: none)').matches;
   if (isTouch) return;
   
@@ -2657,20 +2656,21 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
       
-      // Spotlight position (instantáneo, sin retraso)
+      // Spotlight position (instantáneo)
       card.style.setProperty('--mx', x + 'px');
       card.style.setProperty('--my', y + 'px');
       
-      // 3D Tilt calculation (max ±5 degrees)
-      const rx = ((y - rect.height/2) / (rect.height/2)) * -5;
-      const ry = ((x - rect.width/2) / (rect.width/2)) * 5;
-      card.style.setProperty('--rx', rx + 'deg');
-      card.style.setProperty('--ry', ry + 'deg');
+      // 3D Tilt Card Effect - Parallax Tilt (exact code)
+      const centerX = e.clientX - rect.left - rect.width / 2;
+      const centerY = e.clientY - rect.top - rect.height / 2;
+      const rotateX = -(centerY / rect.height) * 20;
+      const rotateY = (centerX / rect.width) * 20;
+      
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
     });
     
     card.addEventListener('mouseleave', () => {
-      card.style.setProperty('--rx', '0deg');
-      card.style.setProperty('--ry', '0deg');
+      card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
     });
   });
 })();
