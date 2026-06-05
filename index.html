@@ -399,19 +399,23 @@
     position: relative;
     overflow: hidden;
   }
-  .btn::after {
+  .glow-btn::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
     border-radius: inherit;
-    background: radial-gradient(circle 120px at var(--bx, 0px) var(--by, 0px), rgba(0,245,255,0.35), transparent 80%);
+    background: radial-gradient(circle 120px at var(--x, 0px) var(--y, 0px), rgba(0, 245, 255, 0.25) 0%, rgba(147, 51, 234, 0.08) 50%, transparent 100%);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease;
-    z-index: 1;
+    transition: opacity 0.2s ease;
+    z-index: 0;
   }
-  .btn:hover::after {
+  .glow-btn:hover::before {
     opacity: 1;
+  }
+  .glow-btn span {
+    position: relative;
+    z-index: 1;
   }
   .btn-primary {
     background: linear-gradient(135deg, var(--cyan-dark), var(--cyan-dim));
@@ -1520,8 +1524,8 @@
         <span class="hero-tag tag-purple">CTF Player</span>
       </div>
       <div class="hero-btns">
-        <a href="#projects" class="btn btn-primary" data-i18n="hero_btn1">⚡ VER PROYECTOS</a>
-        <a href="#contact" class="btn btn-outline" data-i18n="hero_btn2">↗ CONTACTAR</a>
+        <a href="#projects" class="btn btn-primary glow-btn" data-i18n="hero_btn1"><span>⚡ VER PROYECTOS</span></a>
+        <a href="#contact" class="btn btn-outline glow-btn" data-i18n="hero_btn2"><span>↗ CONTACTAR</span></a>
       </div>
     </div>
   </div>
@@ -2673,7 +2677,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 
 // ─── BUTTON GLOW TRACKING ─────────────────────────────────────
 (function() {
-  const btns = document.querySelectorAll('.btn');
+  const btns = document.querySelectorAll('.glow-btn');
   if (!btns.length) return;
   
   btns.forEach(btn => {
@@ -2681,8 +2685,8 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
       const rect = btn.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      btn.style.setProperty('--bx', x + 'px');
-      btn.style.setProperty('--by', y + 'px');
+      btn.style.setProperty('--x', x + 'px');
+      btn.style.setProperty('--y', y + 'px');
     });
   });
 })();
