@@ -392,7 +392,6 @@
     cursor: pointer;
     text-decoration: none;
     display: inline-flex; align-items: center; gap: 8px;
-    transition: all 0.25s;
     position: relative;
     clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
   }
@@ -403,12 +402,13 @@
   .btn::after {
     content: '';
     position: absolute;
-    inset: 0;
+    top: 0; left: 0; right: 0; bottom: 0;
     border-radius: inherit;
-    background: radial-gradient(circle at var(--bx, 50%) var(--by, 50%), rgba(0,245,255,0.25), transparent 70%);
+    background: radial-gradient(circle 120px at var(--bx, 0px) var(--by, 0px), rgba(0,245,255,0.35), transparent 80%);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s;
+    transition: opacity 0.3s ease;
+    z-index: 1;
   }
   .btn:hover::after {
     opacity: 1;
@@ -1049,11 +1049,11 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), rgba(0,245,255,0.35), rgba(157,78,221,0.2) 45%, transparent 70%);
+    background: radial-gradient(circle 150px at var(--mx, 0px) var(--my, 0px), rgba(0,245,255,0.25), transparent 80%);
     opacity: 0;
     pointer-events: none;
     z-index: 1;
-    transition: opacity 0.4s ease;
+    transition: opacity 0.3s ease;
   }
   .spotlight:hover::after {
     opacity: 1;
@@ -1061,24 +1061,6 @@
   .spotlight:hover {
     transform: translateY(-6px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
     box-shadow: 0 0 40px rgba(0,245,255,0.15), 0 0 80px rgba(157,78,221,0.08);
-  }
-  .spotlight::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(135deg, rgba(0,245,255,0.5), transparent 30% 65%, rgba(157,78,221,0.4));
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.4s;
-    z-index: 2;
-  }
-  .spotlight:hover::before {
-    opacity: 1;
   }
   .about-card, .skill-cat, .project-card, .blog-card, .cert-card, .edu-card, .learn-card, .platform-card, .contact-link {
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s, border-color 0.3s;
@@ -2668,25 +2650,21 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   cards.forEach(card => {
     card.addEventListener('mousemove', e => {
       const rect = card.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
       
-      // Spotlight position with smooth transition
-      requestAnimationFrame(() => {
-        card.style.setProperty('--mx', x + '%');
-        card.style.setProperty('--my', y + '%');
-      });
+      // Spotlight position (instantáneo, sin retraso)
+      card.style.setProperty('--mx', x + 'px');
+      card.style.setProperty('--my', y + 'px');
       
       // 3D Tilt calculation (max ±5 degrees)
-      const rx = ((y - 50) / 50) * -5;
-      const ry = ((x - 50) / 50) * 5;
+      const rx = ((y - rect.height/2) / (rect.height/2)) * -5;
+      const ry = ((x - rect.width/2) / (rect.width/2)) * 5;
       card.style.setProperty('--rx', rx + 'deg');
       card.style.setProperty('--ry', ry + 'deg');
     });
     
     card.addEventListener('mouseleave', () => {
-      card.style.setProperty('--mx', '50%');
-      card.style.setProperty('--my', '50%');
       card.style.setProperty('--rx', '0deg');
       card.style.setProperty('--ry', '0deg');
     });
@@ -2701,14 +2679,10 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   btns.forEach(btn => {
     btn.addEventListener('mousemove', e => {
       const rect = btn.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
-      btn.style.setProperty('--bx', x + '%');
-      btn.style.setProperty('--by', y + '%');
-    });
-    btn.addEventListener('mouseleave', () => {
-      btn.style.setProperty('--bx', '50%');
-      btn.style.setProperty('--by', '50%');
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      btn.style.setProperty('--bx', x + 'px');
+      btn.style.setProperty('--by', y + 'px');
     });
   });
 })();
