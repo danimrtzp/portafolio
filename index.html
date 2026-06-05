@@ -1032,17 +1032,36 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: radial-gradient(340px circle at var(--mx, 50%) var(--my, 50%), rgba(0,245,255,0.15), transparent 60%);
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(0,245,255,0.22), rgba(157,78,221,0.12) 40%, transparent 65%);
     opacity: 0;
     pointer-events: none;
     z-index: 1;
-    transition: opacity 0.35s;
+    transition: opacity 0.4s ease, background 0.1s;
+    mix-blend-mode: screen;
   }
   .spotlight:hover::after {
     opacity: 1;
   }
   .spotlight:hover {
     transform: translateY(-6px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  }
+  .spotlight::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(0,245,255,0.3), transparent 30% 65%, rgba(157,78,221,0.25));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s;
+    z-index: 2;
+  }
+  .spotlight:hover::before {
+    opacity: 0.85;
   }
   .about-card, .skill-cat, .project-card, .blog-card, .cert-card, .edu-card, .learn-card, .platform-card, .contact-link {
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s, border-color 0.3s;
@@ -2635,9 +2654,11 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
       const x = ((e.clientX - rect.left) / rect.width) * 100;
       const y = ((e.clientY - rect.top) / rect.height) * 100;
       
-      // Spotlight position
-      card.style.setProperty('--mx', x + '%');
-      card.style.setProperty('--my', y + '%');
+      // Spotlight position with smooth transition
+      requestAnimationFrame(() => {
+        card.style.setProperty('--mx', x + '%');
+        card.style.setProperty('--my', y + '%');
+      });
       
       // 3D Tilt calculation (max ±5 degrees)
       const rx = ((y - 50) / 50) * -5;
