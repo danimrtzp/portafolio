@@ -1032,18 +1032,18 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(0,245,255,0.22), rgba(157,78,221,0.12) 40%, transparent 65%);
+    background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), rgba(0,245,255,0.35), rgba(157,78,221,0.2) 45%, transparent 70%);
     opacity: 0;
     pointer-events: none;
     z-index: 1;
-    transition: opacity 0.4s ease, background 0.1s;
-    mix-blend-mode: screen;
+    transition: opacity 0.4s ease;
   }
   .spotlight:hover::after {
     opacity: 1;
   }
   .spotlight:hover {
     transform: translateY(-6px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    box-shadow: 0 0 40px rgba(0,245,255,0.15), 0 0 80px rgba(157,78,221,0.08);
   }
   .spotlight::before {
     content: '';
@@ -1051,7 +1051,7 @@
     inset: -1px;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(135deg, rgba(0,245,255,0.3), transparent 30% 65%, rgba(157,78,221,0.25));
+    background: linear-gradient(135deg, rgba(0,245,255,0.5), transparent 30% 65%, rgba(157,78,221,0.4));
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
@@ -1061,7 +1061,7 @@
     z-index: 2;
   }
   .spotlight:hover::before {
-    opacity: 0.85;
+    opacity: 1;
   }
   .about-card, .skill-cat, .project-card, .blog-card, .cert-card, .edu-card, .learn-card, .platform-card, .contact-link {
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s, border-color 0.3s;
