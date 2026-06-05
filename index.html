@@ -396,13 +396,30 @@
     position: relative;
     clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
   }
+  .btn {
+    position: relative;
+    overflow: hidden;
+  }
+  .btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle at var(--bx, 50%) var(--by, 50%), rgba(0,245,255,0.25), transparent 70%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .btn:hover::after {
+    opacity: 1;
+  }
   .btn-primary {
     background: linear-gradient(135deg, var(--cyan-dark), var(--cyan-dim));
     color: var(--bg);
   }
   .btn-primary:hover {
     background: linear-gradient(135deg, var(--cyan), var(--cyan));
-    box-shadow: var(--glow-cyan);
+    box-shadow: 0 0 30px rgba(0,245,255,0.3), 0 0 60px rgba(0,245,255,0.15);
     transform: translateY(-2px);
   }
   .btn-outline {
@@ -412,7 +429,7 @@
   }
   .btn-outline:hover {
     background: rgba(0,245,255,0.1);
-    box-shadow: var(--glow-cyan);
+    box-shadow: 0 0 30px rgba(0,245,255,0.3), 0 0 60px rgba(0,245,255,0.15);
     transform: translateY(-2px);
   }
  
@@ -1798,7 +1815,7 @@
     <div class="edu-timeline">
  
       <!-- Future -->
-      <div class="edu-item fade-in edu-future spotlight">
+      <div class="edu-item fade-in edu-future">
         <div class="edu-connector">
           <div class="edu-dot edu-dot-future"></div>
           <div class="edu-line"></div>
@@ -1820,7 +1837,7 @@
       </div>
  
       <!-- ASIX -->
-      <div class="edu-item fade-in spotlight">
+      <div class="edu-item fade-in">
         <div class="edu-connector">
           <div class="edu-dot edu-dot-active"></div>
           <div class="edu-line"></div>
@@ -1843,7 +1860,7 @@
       </div>
  
       <!-- SMIX -->
-      <div class="edu-item fade-in spotlight">
+      <div class="edu-item fade-in">
         <div class="edu-connector">
           <div class="edu-dot edu-dot-done"></div>
         </div>
@@ -2672,6 +2689,26 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
       card.style.setProperty('--my', '50%');
       card.style.setProperty('--rx', '0deg');
       card.style.setProperty('--ry', '0deg');
+    });
+  });
+})();
+
+// ─── BUTTON GLOW TRACKING ─────────────────────────────────────
+(function() {
+  const btns = document.querySelectorAll('.btn');
+  if (!btns.length) return;
+  
+  btns.forEach(btn => {
+    btn.addEventListener('mousemove', e => {
+      const rect = btn.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      btn.style.setProperty('--bx', x + '%');
+      btn.style.setProperty('--by', y + '%');
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.setProperty('--bx', '50%');
+      btn.style.setProperty('--by', '50%');
     });
   });
 })();
