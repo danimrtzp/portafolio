@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HackTheBox Writeups | danimrtzp</title>
+<link rel="icon" type="image/png" href="../../imagen.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyan: #00f5ff; --cyan-dim: #00c8d4; --cyan-dark: #007a82;
+    --red: #ff2244; --red-dim: #cc1a36; --purple: #9d4edd; --purple-dim: #7b2fd0;
+    --bg: #050a0f; --bg2: #080d14; --bg3: #0a1220; --surface: #0d1928; --surface2: #101e30;
+    --text: #c8e6f0; --text-dim: #6a8fa0; --border: rgba(0,245,255,0.15);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg); color: var(--text); font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden; cursor: default;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px; pointer-events: none; z-index: 0;
+  }
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(5,10,15,0.92); backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border); padding: 0 clamp(16px, 4vw, 48px);
+    height: 60px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: clamp(14px, 2.5vw, 20px); color: var(--cyan); text-shadow: 0 0 20px rgba(0,245,255,0.4); letter-spacing: 2px; text-decoration: none; }
+  .nav-bc { font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--text-dim); display: flex; align-items: center; gap: 8px; }
+  .nav-bc a { color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+  .nav-bc a:hover { color: var(--cyan); }
+  .nav-bc .sep { color: var(--border); }
+  .nav-bc .cur { color: var(--cyan); }
+  .plat-hero {
+    min-height: 35vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 100px 24px 40px;
+    position: relative; z-index: 1;
+  }
+  .plat-icon-big { width: 80px; height: 80px; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; }
+  .plat-icon-big img { width: 64px; height: 64px; object-fit: contain; }
+  .plat-title {
+    font-family: 'Orbitron', sans-serif; font-weight: 900;
+    font-size: clamp(28px, 5vw, 48px); line-height: 1;
+    color: var(--cyan); letter-spacing: 4px; margin-bottom: 8px;
+  }
+  .plat-subtitle {
+    font-family: 'Share Tech Mono', monospace; font-size: 14px;
+    color: var(--text-dim); letter-spacing: 2px; text-align: center;
+  }
+  .plat-stats {
+    display: flex; gap: 16px; margin-top: 24px; flex-wrap: wrap; justify-content: center;
+  }
+  .stat {
+    font-family: 'Share Tech Mono', monospace; font-size: 11px;
+    border: 1px solid var(--border); padding: 6px 14px;
+    background: var(--surface); color: var(--text-dim); letter-spacing: 1px;
+  }
+  .stat span { color: var(--cyan); }
+  .section-wrap { max-width: 1100px; margin: 0 auto; padding: 40px clamp(16px, 5vw, 48px); position: relative; z-index: 1; }
+  .diff-section { margin-bottom: 48px; }
+  .diff-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+    border-bottom: 1px solid var(--border); padding-bottom: 12px;
+  }
+  .diff-name {
+    font-family: 'Orbitron', sans-serif; font-size: 14px; letter-spacing: 2px;
+    color: var(--text); text-transform: uppercase;
+  }
+  .diff-count {
+    font-family: 'Share Tech Mono', monospace; font-size: 10px;
+    color: var(--cyan); border: 1px solid var(--cyan-dark); padding: 2px 8px;
+    background: rgba(0,245,255,0.06);
+  }
+  .diff-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px;
+  }
+  @media(max-width:768px) { .diff-grid { grid-template-columns: 1fr; } }
+  .wu-card {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 20px; text-decoration: none; display: block;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative; overflow: hidden;
+  }
+  .wu-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+    transform: scaleX(0); transition: transform 0.3s ease;
+  }
+  .wu-card:hover::before { transform: scaleX(1); }
+  .wu-card:hover {
+    border-color: rgba(0,245,255,0.4); box-shadow: 0 0 24px rgba(0,245,255,0.1);
+    transform: translateY(-4px);
+  }
+  .wu-card-name {
+    font-family: 'Orbitron', sans-serif; font-size: 14px; letter-spacing: 1px;
+    color: var(--text); margin-bottom: 8px;
+  }
+  .wu-card-meta {
+    font-family: 'Share Tech Mono', monospace; font-size: 11px;
+    color: var(--text-dim); margin-bottom: 12px;
+  }
+  .wu-card-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .wu-tag {
+    font-family: 'Share Tech Mono', monospace; font-size: 9px;
+    padding: 3px 8px; border-radius: 2px; letter-spacing: 1px;
+  }
+  .wu-tag-cyan { border: 1px solid var(--cyan-dark); color: var(--cyan); background: rgba(0,245,255,0.06); }
+  .wu-tag-red { border: 1px solid #5c0f1a; color: var(--red); background: rgba(255,34,68,0.06); }
+  .wu-tag-purple { border: 1px solid #4a1a6b; color: var(--purple); background: rgba(157,78,221,0.06); }
+  .wu-empty {
+    font-family: 'Share Tech Mono', monospace; font-size: 12px;
+    color: var(--text-dim); padding: 20px; text-align: center;
+    border: 1px dashed var(--border); background: var(--bg2);
+  }
+  .wu-footer {
+    border-top: 1px solid var(--border); padding: 28px clamp(16px, 5vw, 48px);
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    position: relative; z-index: 1;
+  }
+  .wu-footer-logo { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 16px; color: var(--cyan); text-shadow: 0 0 20px rgba(0,245,255,0.4); letter-spacing: 2px; }
+  .wu-footer-text { font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--text-dim); }
+  /* Matrix Canvas */
+  #matrix-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.15; }
+  
+  /* Cursor */
+  body { cursor: none !important; }
+  #cursor-dot { width: 6px; height: 6px; background: var(--cyan); border-radius: 50%; position: fixed; pointer-events: none; z-index: 99999; transform: translate(-50%, -50%); box-shadow: 0 0 8px var(--cyan); transition: width 0.15s, height 0.15s; }
+  #cursor-ring { width: 32px; height: 32px; border: 1.5px solid rgba(0,245,255,0.4); border-radius: 50%; position: fixed; pointer-events: none; z-index: 99998; transform: translate(-50%, -50%); transition: transform 0.08s linear; }
+  @media (max-width: 768px) { #cursor-dot, #cursor-ring { display: none; } body { cursor: auto !important; } }
+  
+  /* Scanlines */
+  body::after { content: ''; position: fixed; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px); pointer-events: none; z-index: 9998; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg2); }
+  ::-webkit-scrollbar-thumb { background: var(--cyan-dark); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
+
+  /* SPOTLIGHT + 3D TILT EFFECT */
+  .spotlight {
+    position: relative;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    will-change: transform;
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s, border-color 0.3s;
+  }
+  .spotlight::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle 150px at var(--mx, 0px) var(--my, 0px), rgba(0,245,255,0.25), transparent 80%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+    transition: opacity 0.3s ease;
+  }
+  .spotlight:hover::after {
+    opacity: 1;
+  }
+  .spotlight:hover {
+    box-shadow: 0 0 40px rgba(0,245,255,0.15), 0 0 80px rgba(157,78,221,0.08);
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="../../index.html">DANIMRTZP</a>
+  <div class="nav-bc">
+    <a href="../index.html">writeups</a><span class="sep">/</span><span class="cur">hackthebox</span>
+  </div>
+</nav>
+
+<div class="plat-hero">
+  <div class="plat-icon-big"><img src="https://cdn.simpleicons.org/hackthebox/00f5ff" alt="HackTheBox"></div>
+  <h1 class="plat-title">HACKTHEBOX</h1>
+  <p class="plat-subtitle">Máquinas online de dificultad variable</p>
+  <div class="plat-stats">
+    <div class="stat">Fácil: <span>0</span></div>
+    <div class="stat">Medio: <span>0</span></div>
+    <div class="stat">Difícil: <span>0</span></div>
+    <div class="stat">Insane: <span>0</span></div>
+  </div>
+</div>
+
+<div class="section-wrap">
+  
+  <div class="diff-section">
+    <div class="diff-header">
+      <div class="diff-name">// Fácil</div>
+      <div class="diff-count">0 writeups</div>
+    </div>
+    <div class="diff-grid">
+      <div class="wu-empty">Próximamente — Writeups en preparación</div>
+    </div>
+  </div>
+  
+  <div class="diff-section">
+    <div class="diff-header">
+      <div class="diff-name">// Medio</div>
+      <div class="diff-count">0 writeups</div>
+    </div>
+    <div class="diff-grid">
+      <div class="wu-empty">Próximamente — Writeups en preparación</div>
+    </div>
+  </div>
+  
+  <div class="diff-section">
+    <div class="diff-header">
+      <div class="diff-name">// Difícil</div>
+      <div class="diff-count">0 writeups</div>
+    </div>
+    <div class="diff-grid">
+      <div class="wu-empty">Próximamente — Writeups en preparación</div>
+    </div>
+  </div>
+  
+  <div class="diff-section">
+    <div class="diff-header">
+      <div class="diff-name">// Insane</div>
+      <div class="diff-count">0 writeups</div>
+    </div>
+    <div class="diff-grid">
+      <div class="wu-empty">Próximamente — Writeups en preparación</div>
+    </div>
+  </div>
+  
+</div>
+
+<div class="wu-footer">
+  <div class="wu-footer-logo">DANIMRTZP</div>
+  <div class="wu-footer-text">// Security Researcher · Barcelona 🇪🇸</div>
+</div>
+
+<script>
+// Matrix Rain
+(function() {
+  const canvas = document.createElement('canvas');
+  canvas.id = 'matrix-canvas';
+  canvas.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.15;';
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  let W, H, cols, drops = [];
+  const fontSize = 14;
+  const chars = '$#>/-{}[]01=+*?;:%&';
+  const colors = ['#00f5ff', '#9d4edd', '#ff2244'];
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    cols = Math.floor(W / fontSize);
+    drops = [];
+    for (let i = 0; i < cols; i++) drops[i] = Math.random() * -100;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  function drawMatrix() {
+    ctx.fillStyle = 'rgba(5, 10, 15, 0.05)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.font = fontSize + 'px "Share Tech Mono", monospace';
+    for (let i = 0; i < drops.length; i++) {
+      const char = chars[Math.floor(Math.random() * chars.length)];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      ctx.fillStyle = color;
+      ctx.globalAlpha = 0.3 + Math.random() * 0.7;
+      ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > H && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+    ctx.globalAlpha = 1;
+  }
+  let interval = setInterval(drawMatrix, 50);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) clearInterval(interval);
+    else interval = setInterval(drawMatrix, 50);
+  });
+})();
+</script>
+<script>
+// SPOTLIGHT + TILT EFFECT
+(function() {
+  const cards = document.querySelectorAll('.spotlight');
+  if (!cards.length) return;
+  
+  const isTouch = window.matchMedia('(hover: none)').matches;
+  if (isTouch) return;
+  
+  cards.forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      card.style.setProperty('--mx', x + 'px');
+      card.style.setProperty('--my', y + 'px');
+      
+      const centerX = e.clientX - rect.left - rect.width / 2;
+      const centerY = e.clientY - rect.top - rect.height / 2;
+      const rotateX = -(centerY / rect.height) * 20;
+      const rotateY = (centerX / rect.width) * 20;
+      
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
