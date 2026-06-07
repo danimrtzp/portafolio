@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Writeups | danimrtzp</title>
+<link rel="icon" type="image/png" href="../imagen.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyan: #00f5ff; --cyan-dim: #00c8d4; --cyan-dark: #007a82;
+    --red: #ff2244; --red-dim: #cc1a36; --purple: #9d4edd; --purple-dim: #7b2fd0;
+    --bg: #050a0f; --bg2: #080d14; --bg3: #0a1220; --surface: #0d1928; --surface2: #101e30;
+    --text: #c8e6f0; --text-dim: #6a8fa0; --border: rgba(0,245,255,0.15);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg); color: var(--text); font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden; cursor: default;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px; pointer-events: none; z-index: 0;
+  }
+  
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(5,10,15,0.92); backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border); padding: 0 clamp(16px, 4vw, 48px);
+    height: 60px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: clamp(14px, 2.5vw, 20px); color: var(--cyan); text-shadow: 0 0 20px rgba(0,245,255,0.4); letter-spacing: 2px; text-decoration: none; }
+  .nav-back { font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--text-dim); text-decoration: none; letter-spacing: 1px; transition: color 0.2s; }
+  .nav-back:hover { color: var(--cyan); text-shadow: 0 0 20px rgba(0,245,255,0.4); }
+  
+  /* HERO */
+  .wu-hero {
+    min-height: 40vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 100px 24px 40px;
+    position: relative; z-index: 1;
+  }
+  .wu-title {
+    font-family: 'Orbitron', sans-serif; font-weight: 900;
+    font-size: clamp(32px, 7vw, 72px); line-height: 1;
+    background: linear-gradient(90deg, var(--cyan) 0%, var(--purple) 50%, var(--red) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    margin-bottom: 12px; letter-spacing: 4px;
+  }
+  .wu-subtitle {
+    font-family: 'Share Tech Mono', monospace; font-size: clamp(13px, 2vw, 16px);
+    color: var(--text-dim); letter-spacing: 2px; text-align: center;
+  }
+  .wu-count {
+    font-family: 'Share Tech Mono', monospace; font-size: 14px; color: var(--cyan);
+    margin-top: 20px; border: 1px solid var(--cyan-dark); padding: 8px 20px;
+    background: rgba(0,245,255,0.06); letter-spacing: 2px;
+  }
+  
+  /* GRID */
+  .section-wrap { max-width: 1100px; margin: 0 auto; padding: 60px clamp(16px, 5vw, 48px); position: relative; z-index: 1; }
+  .plat-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 24px;
+  }
+  @media(max-width:768px) { .plat-grid { grid-template-columns: 1fr; gap: 16px; } }
+  .plat-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+    padding: 32px 24px; text-decoration: none; display: flex; flex-direction: column;
+    align-items: center; gap: 16px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative; overflow: hidden; cursor: pointer;
+  }
+  .plat-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+    transform: scaleX(0); transition: transform 0.3s ease;
+  }
+  .plat-card:hover::before { transform: scaleX(1); }
+  .plat-card:hover {
+    border-color: rgba(0,245,255,0.4); box-shadow: 0 0 24px rgba(0,245,255,0.1);
+    transform: translateY(-6px);
+  }
+  .plat-icon { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; }
+  .plat-icon img { width: 40px; height: 40px; object-fit: contain; }
+  .plat-name {
+    font-family: 'Orbitron', sans-serif; font-size: 16px; letter-spacing: 2px;
+    color: var(--text); text-align: center;
+  }
+  .plat-desc {
+    font-family: 'Share Tech Mono', monospace; font-size: 12px;
+    color: var(--text-dim); text-align: center; line-height: 1.6;
+  }
+  .plat-count {
+    font-family: 'Share Tech Mono', monospace; font-size: 11px;
+    color: var(--cyan); border: 1px solid var(--cyan-dark); padding: 4px 12px;
+    background: rgba(0,245,255,0.06); letter-spacing: 1px;
+  }
+  
+  /* FOOTER */
+  .wu-footer {
+    border-top: 1px solid var(--border); padding: 28px clamp(16px, 5vw, 48px);
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    position: relative; z-index: 1;
+  }
+  .wu-footer-logo { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 16px; color: var(--cyan); text-shadow: 0 0 20px rgba(0,245,255,0.4); letter-spacing: 2px; }
+  .wu-footer-text { font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--text-dim); }
+  
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg2); }
+  ::-webkit-scrollbar-thumb { background: var(--cyan-dark); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
+  
+  /* Matrix Canvas */
+  #matrix-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.15; }
+  
+  /* Cursor */
+  body { cursor: none !important; }
+  #cursor-dot { width: 6px; height: 6px; background: var(--cyan); border-radius: 50%; position: fixed; pointer-events: none; z-index: 99999; transform: translate(-50%, -50%); box-shadow: 0 0 8px var(--cyan); transition: width 0.15s, height 0.15s; }
+  #cursor-ring { width: 32px; height: 32px; border: 1.5px solid rgba(0,245,255,0.4); border-radius: 50%; position: fixed; pointer-events: none; z-index: 99998; transform: translate(-50%, -50%); transition: transform 0.08s linear; }
+  @media (max-width: 768px) { #cursor-dot, #cursor-ring { display: none; } body { cursor: auto !important; } }
+  
+  /* Scanlines */
+  body::after { content: ''; position: fixed; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px); pointer-events: none; z-index: 9998; }
+
+  /* SPOTLIGHT + 3D TILT EFFECT */
+  .spotlight {
+    position: relative;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    will-change: transform;
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s, border-color 0.3s;
+  }
+  .spotlight::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle 150px at var(--mx, 0px) var(--my, 0px), rgba(0,245,255,0.25), transparent 80%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+    transition: opacity 0.3s ease;
+  }
+  .spotlight:hover::after {
+    opacity: 1;
+  }
+  .spotlight:hover {
+    box-shadow: 0 0 40px rgba(0,245,255,0.15), 0 0 80px rgba(157,78,221,0.08);
+  }
+</style>
+</head>
+<body>
+
+<canvas id="matrix-canvas"></canvas>
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<nav>
+  <a class="nav-logo" href="../index.html">DANIMRTZP</a>
+  <a class="nav-back" href="../index.html">← VOLVER AL PORTFOLIO</a>
+</nav>
+
+<div class="wu-hero">
+  <h1 class="wu-title">WRITEUPS</h1>
+  <p class="wu-subtitle">Documentación técnica de máquinas resueltas en plataformas de CTF</p>
+    <div class="wu-count">1 WRITEUP PUBLICADO</div>
+</div>
+
+<div class="section-wrap">
+  <div class="plat-grid">
+    <a class="plat-card spotlight" href="dockerlabs/index.html">
+      <div class="plat-icon"><img src="../logo.png" alt="DockerLabs"></div>
+      <div class="plat-name">DOCKERLABS</div>
+      <div class="plat-desc">Máquinas Docker para práctica de pentesting</div>
+      <div class="plat-count">1 WRITEUP</div>
+    </a>
+    <a class="plat-card spotlight" href="hackthebox/index.html">
+      <div class="plat-icon"><img src="https://cdn.simpleicons.org/hackthebox/00f5ff" alt="HackTheBox"></div>
+      <div class="plat-name">HACKTHEBOX</div>
+      <div class="plat-desc">Máquinas online de dificultad variable</div>
+      <div class="plat-count">0 WRITEUPS</div>
+    </a>
+    <a class="plat-card spotlight" href="tryhackme/index.html">
+      <div class="plat-icon"><img src="https://cdn.simpleicons.org/tryhackme/00f5ff" alt="TryHackMe"></div>
+      <div class="plat-name">TRYHACKME</div>
+      <div class="plat-desc">Rooms y learning paths guiados</div>
+      <div class="plat-count">0 WRITEUPS</div>
+    </a>
+    <a class="plat-card spotlight" href="thehackerslabs/index.html">
+      <div class="plat-icon"><img src="../logo4.png" alt="The Hackers Labs"></div>
+      <div class="plat-name">THE HACKERS LABS</div>
+      <div class="plat-desc">Máquinas en español para principiantes a expertos</div>
+      <div class="plat-count">0 WRITEUPS</div>
+    </a>
+  </div>
+</div>
+
+<div class="wu-footer">
+  <div class="wu-footer-logo">DANIMRTZP</div>
+  <div class="wu-footer-text">// Security Researcher · Barcelona 🇪🇸</div>
+</div>
+
+<script>
+// Matrix Rain
+(function() {
+  const canvas = document.getElementById('matrix-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, cols, drops = [];
+  const fontSize = 14;
+  const chars = '$#>/-{}[]01=+*?;:%&';
+  const colors = ['#00f5ff', '#9d4edd', '#ff2244'];
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    cols = Math.floor(W / fontSize);
+    drops = [];
+    for (let i = 0; i < cols; i++) drops[i] = Math.random() * -100;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  function drawMatrix() {
+    ctx.fillStyle = 'rgba(5, 10, 15, 0.05)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.font = fontSize + 'px "Share Tech Mono", monospace';
+    for (let i = 0; i < drops.length; i++) {
+      const char = chars[Math.floor(Math.random() * chars.length)];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      ctx.fillStyle = color;
+      ctx.globalAlpha = 0.3 + Math.random() * 0.7;
+      ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > H && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+    ctx.globalAlpha = 1;
+  }
+  let interval = setInterval(drawMatrix, 50);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) clearInterval(interval);
+    else interval = setInterval(drawMatrix, 50);
+  });
+})();
+
+// Cursor
+(function() {
+  const dot = document.getElementById('cursor-dot');
+  const ring = document.getElementById('cursor-ring');
+  if (!dot || !ring) return;
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animCursor() {
+    rx += (mx - rx) * 0.14; ry += (my - ry) * 0.14;
+    dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+})();
+</script>
+
+<script>
+// SPOTLIGHT + TILT EFFECT
+(function() {
+  const cards = document.querySelectorAll('.spotlight');
+  if (!cards.length) return;
+  
+  const isTouch = window.matchMedia('(hover: none)').matches;
+  if (isTouch) return;
+  
+  cards.forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      card.style.setProperty('--mx', x + 'px');
+      card.style.setProperty('--my', y + 'px');
+      
+      const centerX = e.clientX - rect.left - rect.width / 2;
+      const centerY = e.clientY - rect.top - rect.height / 2;
+      const rotateX = -(centerY / rect.height) * 20;
+      const rotateY = (centerX / rect.width) * 20;
+      
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
