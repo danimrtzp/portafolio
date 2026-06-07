@@ -124,31 +124,6 @@
   /* Scanlines */
   body::after { content: ''; position: fixed; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px); pointer-events: none; z-index: 9998; }
 
-  /* SPOTLIGHT + 3D TILT EFFECT */
-  .spotlight {
-    position: relative;
-    overflow: hidden;
-    transform-style: preserve-3d;
-    will-change: transform;
-    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s, border-color 0.3s;
-  }
-  .spotlight::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: radial-gradient(circle 150px at var(--mx, 0px) var(--my, 0px), rgba(0,245,255,0.25), transparent 80%);
-    opacity: 0;
-    pointer-events: none;
-    z-index: 1;
-    transition: opacity 0.3s ease;
-  }
-  .spotlight:hover::after {
-    opacity: 1;
-  }
-  .spotlight:hover {
-    box-shadow: 0 0 40px rgba(0,245,255,0.15), 0 0 80px rgba(157,78,221,0.08);
-  }
 </style>
 </head>
 <body>
@@ -170,25 +145,25 @@
 
 <div class="section-wrap">
   <div class="plat-grid">
-    <a class="plat-card spotlight" href="dockerlabs/index.html">
+    <a class="plat-card" href="dockerlabs/index.html">
       <div class="plat-icon"><img src="../logo.png" alt="DockerLabs"></div>
       <div class="plat-name">DOCKERLABS</div>
       <div class="plat-desc">Máquinas Docker para práctica de pentesting</div>
       <div class="plat-count">1 WRITEUP</div>
     </a>
-    <a class="plat-card spotlight" href="hackthebox/index.html">
+    <a class="plat-card" href="hackthebox/index.html">
       <div class="plat-icon"><img src="https://cdn.simpleicons.org/hackthebox/00f5ff" alt="HackTheBox"></div>
       <div class="plat-name">HACKTHEBOX</div>
       <div class="plat-desc">Máquinas online de dificultad variable</div>
       <div class="plat-count">0 WRITEUPS</div>
     </a>
-    <a class="plat-card spotlight" href="tryhackme/index.html">
+    <a class="plat-card" href="tryhackme/index.html">
       <div class="plat-icon"><img src="https://cdn.simpleicons.org/tryhackme/00f5ff" alt="TryHackMe"></div>
       <div class="plat-name">TRYHACKME</div>
       <div class="plat-desc">Rooms y learning paths guiados</div>
       <div class="plat-count">0 WRITEUPS</div>
     </a>
-    <a class="plat-card spotlight" href="thehackerslabs/index.html">
+    <a class="plat-card" href="thehackerslabs/index.html">
       <div class="plat-icon"><img src="../logo4.png" alt="The Hackers Labs"></div>
       <div class="plat-name">THE HACKERS LABS</div>
       <div class="plat-desc">Máquinas en español para principiantes a expertos</div>
@@ -259,38 +234,7 @@
 })();
 </script>
 
-<script>
-// SPOTLIGHT + TILT EFFECT
-(function() {
-  const cards = document.querySelectorAll('.spotlight');
-  if (!cards.length) return;
-  
-  const isTouch = window.matchMedia('(hover: none)').matches;
-  if (isTouch) return;
-  
-  cards.forEach(card => {
-    card.addEventListener('mousemove', e => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      
-      card.style.setProperty('--mx', x + 'px');
-      card.style.setProperty('--my', y + 'px');
-      
-      const centerX = e.clientX - rect.left - rect.width / 2;
-      const centerY = e.clientY - rect.top - rect.height / 2;
-      const rotateX = -(centerY / rect.height) * 20;
-      const rotateY = (centerX / rect.width) * 20;
-      
-      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-    });
-    
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
-    });
-  });
-})();
-</script>
+
 
 </body>
 </html>
