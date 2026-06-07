@@ -206,31 +206,6 @@
   /* Scanlines */
   body::after { content: ''; position: fixed; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px); pointer-events: none; z-index: 9998; }
 
-  /* SPOTLIGHT + 3D TILT EFFECT */
-  .spotlight {
-    position: relative;
-    overflow: hidden;
-    transform-style: preserve-3d;
-    will-change: transform;
-    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s, border-color 0.3s;
-  }
-  .spotlight::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: radial-gradient(circle 150px at var(--mx, 0px) var(--my, 0px), rgba(0,245,255,0.25), transparent 80%);
-    opacity: 0;
-    pointer-events: none;
-    z-index: 1;
-    transition: opacity 0.3s ease;
-  }
-  .spotlight:hover::after {
-    opacity: 1;
-  }
-  .spotlight:hover {
-    box-shadow: 0 0 40px rgba(0,245,255,0.15), 0 0 80px rgba(157,78,221,0.08);
-  }
 </style>
 </head>
 <body>
@@ -274,7 +249,7 @@
 <div class="main">
   
   <!-- FICHA TÉCNICA -->
-  <div class="ficha spotlight" id="ficha">
+  <div class="ficha" id="ficha">
     <div class="ficha-item">
       <span class="ficha-label">OS</span>
       <span class="ficha-val">Ubuntu Linux (Docker)</span>
@@ -307,7 +282,7 @@
     <p>El primer paso en cualquier pentest es conocer la superficie de ataque. Utilizamos <strong>Nmap</strong>, el escáner de red más popular, para descubrir qué puertos están abiertos en la máquina objetivo y qué servicios corren detrás de ellos.</p>
     <p>La flag <code>-p-</code> escanea todos los 65535 puertos TCP, <code>-sS</code> realiza un SYN stealth scan, <code>-sC</code> ejecuta scripts de detección por defecto, <code>-sV</code> detecta versiones, y <code>-oN</code> guarda el resultado en un archivo.</p>
     
-    <div class="cmd spotlight">
+    <div class="cmd">
       <div class="cmd-header">
         <div class="cmd-dot cmd-dot-r"></div>
         <div class="cmd-dot cmd-dot-y"></div>
@@ -330,7 +305,7 @@
 <span class="comment"># Guardamos el resultado en 'escaneo' para consultarlo luego.</span></div>
     </div>
     
-    <div class="img-box spotlight">
+    <div class="img-box">
       <img src="../../images/dockerlabs/vacaciones/escaneo_nmap.png" alt="Escaneo Nmap">
       <div class="img-cap"><span>Fig 1.</span> Escaneo de puertos con Nmap — detectamos SSH (22) y HTTP (80) abiertos.</div>
     </div>
@@ -342,7 +317,7 @@
     <p>Con el puerto HTTP (80) abierto, revisamos la web. El título indica que no hay contenido, solo HTML vacío. Usamos <strong>Gobuster</strong> para descubrir archivos y directorios ocultos.</p>
     <p>La flag <code>-u</code> especifica la URL, <code>-w</code> el diccionario, y <code>-x</code> las extensiones a buscar.</p>
     
-    <div class="cmd spotlight">
+    <div class="cmd">
       <div class="cmd-header">
         <div class="cmd-dot cmd-dot-r"></div>
         <div class="cmd-dot cmd-dot-y"></div>
@@ -374,33 +349,33 @@
 <span class="comment"># La web solo tiene index.html. Nada más que enumerar.</span></div>
     </div>
     
-    <div class="img-box spotlight">
+    <div class="img-box">
       <img src="../../images/dockerlabs/vacaciones/enumeracion_directorios.png" alt="Enumeración Gobuster">
       <div class="img-cap"><span>Fig 2.</span> Gobuster solo encuentra index.html, javascript y server-status. No hay directorios ocultos.</div>
     </div>
     
     <p>La web está en blanco, así que inspeccionamos el <strong>código fuente</strong> con <code>Ctrl+U</code>. Es una técnica común en CTFs: los desarrolladores dejan pistas en comentarios HTML.</p>
     
-    <div class="img-box spotlight">
+    <div class="img-box">
       <img src="../../images/dockerlabs/vacaciones/analizar_web.png" alt="Web vacía">
       <div class="img-cap"><span>Fig 3.</span> La web está completamente en blanco — solo carga index.html sin contenido visible.</div>
     </div>
     
-    <div class="find spotlight">
+    <div class="find">
       <div class="find-title">🔍 HALLAZGO</div>
       <p>En el código fuente (Ctrl+U) encontramos un comentario HTML escondido:</p>
       <p style="margin-top:6px; color:var(--text);"><span class="hl">&lt;!-- De : Juan Para: Camilo , te he dejado un correo es importante... --&gt;</span></p>
       <p style="margin-top:6px;">Dos usuarios potenciales: <strong>juan</strong> y <strong>camilo</strong>. Y hay un "correo" importante.</p>
     </div>
     
-    <div class="img-box sm spotlight">
+    <div class="img-box sm">
       <img src="../../images/dockerlabs/vacaciones/mensaje_escondido.png" alt="Mensaje escondido">
       <div class="img-cap"><span>Fig 4.</span> Comentario HTML oculto revelando usuarios <strong>juan</strong> y <strong>camilo</strong>.</div>
     </div>
     
     <p>Revisamos el archivo de escaneo para confirmar que SSH está abierto antes de intentar fuerza bruta:</p>
     
-    <div class="cmd spotlight">
+    <div class="cmd">
       <div class="cmd-header">
         <div class="cmd-dot cmd-dot-r"></div>
         <div class="cmd-dot cmd-dot-y"></div>
@@ -420,7 +395,7 @@
 <span class="comment"># Confirmado: SSH abierto. Vector de ataque: fuerza bruta vía SSH.</span></div>
     </div>
     
-    <div class="img-box spotlight">
+    <div class="img-box">
       <img src="../../images/dockerlabs/vacaciones/recordatorio_escaneo_nmap.png" alt="Revisión escaneo Nmap">
       <div class="img-cap"><span>Fig 5.</span> Revisamos el archivo de escaneo con <span class="cmd-c">cat escaneo</span> para confirmar el puerto SSH (22).</div>
     </div>
@@ -431,7 +406,7 @@
     <h2 class="section-title">Explotación</h2>
     <p>Con dos usuarios potenciales y SSH abierto, usamos <strong>Hydra</strong> para ataque de fuerza bruta. <code>-l</code> usuario fijo, <code>-P</code> diccionario rockyou.txt, <code>-I</code> ignora verificación de archivo.</p>
     
-    <div class="cmd spotlight">
+    <div class="cmd">
       <div class="cmd-header">
         <div class="cmd-dot cmd-dot-r"></div>
         <div class="cmd-dot cmd-dot-y"></div>
@@ -451,14 +426,14 @@
 <span class="comment"># ¡Credenciales encontradas! camilo:password1</span></div>
     </div>
     
-    <div class="img-box spotlight">
+    <div class="img-box">
       <img src="../../images/dockerlabs/vacaciones/fuerza_bruta_camilo.png" alt="Fuerza bruta Hydra">
       <div class="img-cap"><span>Fig 6.</span> Hydra encuentra la contraseña de <strong>camilo</strong>: <span class="hl">password1</span>.</div>
     </div>
     
     <p>Nos conectamos por SSH como <strong>camilo</strong>. Exportamos <code>TERM=xterm</code> para que la terminal funcione correctamente.</p>
     
-    <div class="cmd spotlight">
+    <div class="cmd">
       <div class="cmd-header">
         <div class="cmd-dot cmd-dot-r"></div>
         <div class="cmd-dot cmd-dot-y"></div>
@@ -472,7 +447,7 @@
 $ <span class="cmd-c">export TERM=xterm</span></div>
     </div>
     
-    <div class="img-box spotlight">
+    <div class="img-box">
       <img src="../../images/dockerlabs/vacaciones/conexion_ssh_camilo.png" alt="Conexión SSH camilo">
       <div class="img-cap"><span>Fig 7.</span> Conexión SSH exitosa como <strong>camilo</strong>.</div>
     </div>
@@ -483,7 +458,7 @@ $ <span class="cmd-c">export TERM=xterm</span></div>
     <h2 class="section-title">Post-Explotación</h2>
     <p>Ya dentro como <strong>camilo</strong>, intentamos escalar privilegios. El comando <strong><code>sudo -l</code></strong> lista qué comandos puede ejecutar el usuario con privilegios de root.</p>
     
-    <div class="cmd spotlight">
+    <div class="cmd">
       <div class="cmd-header">
         <div class="cmd-dot cmd-dot-r"></div>
         <div class="cmd-dot cmd-dot-y"></div>
@@ -498,7 +473,7 @@ $ <span class="cmd-c">export TERM=xterm</span></div>
 <span class="comment"># Necesitamos encontrar otra forma de avanzar.</span></div>
     </div>
     
-    <div class="img-box sm spotlight">
+    <div class="img-box sm">
       <img src="../../images/dockerlabs/vacaciones/sudo-l_camilo.png" alt="sudo -l camilo">
       <div class="img-cap"><span>Fig 8.</span> <span class="cmd-c">sudo -l</span> como camilo confirma que NO tiene permisos sudo.</div>
     </div>
@@ -506,7 +481,7 @@ $ <span class="cmd-c">export TERM=xterm</span></div>
     <p>Camilo no puede escalar. Recordemos el mensaje del código fuente: <em>"De: Juan Para: Camilo, te he dejado un correo es importante..."</em>. Como ya somos camilo, hay un correo esperándonos.</p>
     <p>En Linux, los correos locales se almacenan en <strong>/var/mail</strong>. Primero revisamos los usuarios del sistema en <strong>/home</strong>:</p>
     
-    <div class="cmd spotlight">
+    <div class="cmd">
       <div class="cmd-header">
         <div class="cmd-dot cmd-dot-r"></div>
         <div class="cmd-dot cmd-dot-y"></div>
@@ -521,14 +496,14 @@ $ <span class="cmd-c">ls</span>
 <span class="comment"># El mensaje mencionaba a Juan, así que probablemente él dejó el correo.</span></div>
     </div>
     
-    <div class="img-box xs spotlight">
+    <div class="img-box xs">
       <img src="../../images/dockerlabs/vacaciones/ver_usuarios_home.png" alt="Usuarios en /home">
       <div class="img-cap"><span>Fig 9.</span> <strong>/home</strong> revela tres usuarios: camilo, juan y pedro.</div>
     </div>
     
     <p>Ahora buscamos el correo en <strong>/var/mail</strong>. Navegamos hasta encontrar el correo de camilo:</p>
     
-    <div class="cmd spotlight">
+    <div class="cmd">
       <div class="cmd-header">
         <div class="cmd-dot cmd-dot-r"></div>
         <div class="cmd-dot cmd-dot-y"></div>
@@ -550,14 +525,14 @@ $ <span class="cmd-c">cat correo.txt</span>
 <span class="comment"># Como el correo lo envió juan, es lógico que sea su contraseña.</span></div>
     </div>
     
-    <div class="img-box spotlight">
+    <div class="img-box">
       <img src="../../images/dockerlabs/vacaciones/mensaje_correo_var.png" alt="Correo en /var/mail">
       <div class="img-cap"><span>Fig 10.</span> Exploración de <strong>/var/mail</strong> → encontramos <strong>correo.txt</strong> con la contraseña de Juan: <span class="hl">2k84dicb</span>.</div>
     </div>
     
     <p>Con la contraseña de <strong>juan</strong>, usamos <strong><code>su - juan</code></strong> para pivotar. <code>su</code> (switch user) cambia de usuario. La flag <code>-</code> simula un login completo.</p>
     
-    <div class="cmd spotlight">
+    <div class="cmd">
       <div class="cmd-header">
         <div class="cmd-dot cmd-dot-r"></div>
         <div class="cmd-dot cmd-dot-y"></div>
@@ -572,7 +547,7 @@ $ <span class="cmd-c">whoami</span>
 <span class="comment"># ¡Pivot exitoso! Ahora somos juan.</span></div>
     </div>
     
-    <div class="img-box xs spotlight">
+    <div class="img-box xs">
       <img src="../../images/dockerlabs/vacaciones/conexion_juan.png" alt="Conexión como juan">
       <div class="img-cap"><span>Fig 11.</span> <span class="cmd-c">su - juan</span> con contraseña <strong>2k84dicb</strong> → <span class="cmd-c">whoami</span> confirma que somos juan.</div>
     </div>
@@ -583,7 +558,7 @@ $ <span class="cmd-c">whoami</span>
     <h2 class="section-title">Escalada de Privilegios</h2>
     <p>Como usuario <strong>juan</strong>, repetimos: <code>sudo -l</code> para ver qué comandos puede ejecutar como root.</p>
     
-    <div class="cmd spotlight">
+    <div class="cmd">
       <div class="cmd-header">
         <div class="cmd-dot cmd-dot-r"></div>
         <div class="cmd-dot cmd-dot-y"></div>
@@ -602,7 +577,7 @@ $ <span class="cmd-c">whoami</span>
 <span class="comment"># NOPASSWD significa que no pide contraseña al usar sudo.</span></div>
     </div>
     
-    <div class="find red spotlight">
+    <div class="find red">
       <div class="find-title">⚠️ VULNERABILIDAD — Sudo Misconfiguration</div>
       <p><strong>sudo -l</strong> revela que <strong>juan</strong> puede ejecutar <strong>/usr/bin/ruby</strong> como <strong>root</strong> con <strong>NOPASSWD</strong>. Esto es una configuración incorrecta: otorgar permisos sin contraseña a un binario interactivo permite escalar privilegios trivialmente.</p>
       <p style="margin-top:6px;">Consultamos <strong>GTFOBins</strong> (gtfobins.github.io), un repositorio que documenta cómo abusar de binarios con permisos sudo. Para Ruby:</p>
@@ -610,7 +585,7 @@ $ <span class="cmd-c">whoami</span>
       <p style="margin-top:6px;">El parámetro <code>-e</code> ejecuta código Ruby inline. <code>exec</code> reemplaza el proceso Ruby con una shell bash, y como sudo la ejecuta como root, obtenemos shell root.</p>
     </div>
     
-    <div class="cmd spotlight">
+    <div class="cmd">
       <div class="cmd-header">
         <div class="cmd-dot cmd-dot-r"></div>
         <div class="cmd-dot cmd-dot-y"></div>
@@ -631,12 +606,12 @@ $ <span class="cmd-c">whoami</span>
 <span class="comment"># uid=0 confirma que somos root (superusuario).</span></div>
     </div>
     
-    <div class="img-box spotlight">
+    <div class="img-box">
       <img src="../../images/dockerlabs/vacaciones/escalar_privilegios_juan_a_root.png" alt="Escalada a root">
       <div class="img-cap"><span>Fig 12.</span> <span class="cmd-c">sudo -l</span> muestra <strong>NOPASSWD: /usr/bin/ruby</strong> → escalamos con <span class="cmd-c">sudo ruby -e 'exec "/bin/bash"'</span> → <span class="ok">root@ab43b6d8ed09:~#</span></div>
     </div>
     
-    <div class="find green spotlight">
+    <div class="find green">
       <div class="find-title">✅ RESUMEN DE LA MÁQUINA</div>
       <p><strong>1.</strong> Nmap descubre puertos 22 (SSH) y 80 (HTTP)</p>
       <p><strong>2.</strong> Gobuster confirma web vacía; Ctrl+U revela comentario HTML con usuarios <strong>juan</strong> y <strong>camilo</strong></p>
@@ -653,7 +628,7 @@ $ <span class="cmd-c">whoami</span>
   </section>
   
   <!-- GLOSSARY -->
-  <section class="glossary spotlight" id="glossary">
+  <section class="glossary" id="glossary">
     <div class="glossary-title">// GLOSARIO</div>
     <div class="glossary-grid">
       <div class="glossary-item"><strong>Nmap:</strong> Escáner de red líder. Detecta puertos, servicios, versiones y OS. Flags: <span class="cmd-c">-p-</span> (todos los puertos), <span class="cmd-c">-sS</span> (SYN stealth), <span class="cmd-c">-sC</span> (scripts), <span class="cmd-c">-sV</span> (versiones), <span class="cmd-c">-oN</span> (guardar).</div>
@@ -717,38 +692,7 @@ $ <span class="cmd-c">whoami</span>
 })();
 </script>
 
-<script>
-// SPOTLIGHT + TILT EFFECT
-(function() {
-  const cards = document.querySelectorAll('.spotlight');
-  if (!cards.length) return;
-  
-  const isTouch = window.matchMedia('(hover: none)').matches;
-  if (isTouch) return;
-  
-  cards.forEach(card => {
-    card.addEventListener('mousemove', e => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      
-      card.style.setProperty('--mx', x + 'px');
-      card.style.setProperty('--my', y + 'px');
-      
-      const centerX = e.clientX - rect.left - rect.width / 2;
-      const centerY = e.clientY - rect.top - rect.height / 2;
-      const rotateX = -(centerY / rect.height) * 20;
-      const rotateY = (centerX / rect.width) * 20;
-      
-      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-    });
-    
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
-    });
-  });
-})();
-</script>
+
 
 </body>
 </html>
