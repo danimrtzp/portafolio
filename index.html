@@ -175,6 +175,69 @@
     font-size: 11px;
     color: var(--text-dim);
   }
+  /* Scan line al inicio */
+  .scan-line {
+    position: absolute;
+    left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cyan), var(--purple), var(--red), transparent);
+    box-shadow: 0 0 20px var(--cyan), 0 0 40px var(--purple);
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .scan-line.active {
+    animation: scan-down 1.2s ease-in-out;
+  }
+  @keyframes scan-down {
+    0% { top: 0; opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+  }
+  /* Destello de mensaje */
+  .loader-terminal {
+    position: relative;
+    overflow: hidden;
+  }
+  .loader-terminal::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at 10% 50%, rgba(0,245,255,0.15), transparent 60%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.1s;
+  }
+  .loader-terminal.flash::after {
+    animation: flash-msg 0.3s ease-out;
+  }
+  @keyframes flash-msg {
+    0% { opacity: 0.8; }
+    100% { opacity: 0; }
+  }
+  /* ASCII art final */
+  .loader-ascii {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(8px, 1.5vw, 11px);
+    color: var(--cyan);
+    text-align: center;
+    line-height: 1.4;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.4s, transform 0.4s;
+    white-space: pre;
+    margin-top: 8px;
+  }
+  .loader-ascii.visible {
+    opacity: 1;
+    transform: scale(1);
+  }
+  /* Typing cursor */
+  .typing-cursor::after {
+    content: '_';
+    animation: blink-cursor 0.7s step-end infinite;
+    color: var(--cyan);
+  }
+  @keyframes blink-cursor { 0%,100%{opacity:1} 50%{opacity:0} }
  
   /* ── BG GRID ── */
   body::before {
@@ -1512,6 +1575,7 @@
 <!-- LOADER -->
 <div id="loader">
   <canvas id="loader-matrix"></canvas>
+  <div class="scan-line" id="scan-line"></div>
   <div class="loader-content">
     <div class="loader-logo">
       <img src="imagen.png" alt="danimrtzp">
@@ -1522,10 +1586,11 @@
       <div class="loader-bar" id="loader-bar"></div>
       <div class="loader-bar-glitch" id="loader-glitch"></div>
     </div>
-    <div class="loader-terminal">
-      <div class="loader-term-line" id="loader-msg"><span class="term-prompt">root@danimrtzp:~#</span> Initializing...</div>
+    <div class="loader-terminal" id="loader-terminal">
+      <div class="loader-term-line" id="loader-msg"><span class="term-prompt">root@danimrtzp:~#</span> <span id="loader-text">Initializing...</span><span class="typing-cursor"></span></div>
     </div>
     <div class="loader-pct" id="loader-pct">0%</div>
+    <div class="loader-ascii" id="loader-ascii"></div>
   </div>
 </div>
  
@@ -2346,18 +2411,54 @@ const loaderMsgs = [
   ['[OK] Access granted. Welcome, danimrtzp.', 100, 'ok'],
 ];
 
+const asciiArt = `
+╔══════════════════════════════════════════╗
+║     ACCESS GRANTED · WELCOME BACK      ║
+╚══════════════════════════════════════════╝`;
+
 let msgIdx = 0;
+let currentText = '';
+let charIdx = 0;
+let isTyping = false;
 const loaderMsg = document.getElementById('loader-msg');
+const loaderText = document.getElementById('loader-text');
 const loaderPct = document.getElementById('loader-pct');
 const loaderBar = document.getElementById('loader-bar');
 const loaderGlitch = document.getElementById('loader-glitch');
+const loaderTerminal = document.getElementById('loader-terminal');
+const loaderAscii = document.getElementById('loader-ascii');
 
-function animateLoader() {
-  if (msgIdx >= loaderMsgs.length) return;
-  const [msg, pct, type] = loaderMsgs[msgIdx];
+// Scan line al inicio
+(function() {
+  const scanLine = document.getElementById('scan-line');
+  if (scanLine) {
+    setTimeout(() => scanLine.classList.add('active'), 100);
+    setTimeout(() => scanLine.classList.remove('active'), 1400);
+  }
+})();
+
+function typeMessage(msg, type, pct, onComplete) {
   const spanClass = type === 'warn' ? 'term-warn' : 'term-ok';
-  loaderMsg.innerHTML = `<span class="term-prompt">root@danimrtzp:~#</span> <span class="${spanClass}">${msg}</span>`;
-  loaderPct.textContent = pct + '%';
+  currentText = msg;
+  charIdx = 0;
+  isTyping = true;
+  
+  // Glitch de porcentaje en el 58%
+  if (pct === 58 && loaderPct) {
+    const glitchValues = ['87%', '12%', '64%', '33%', '58%'];
+    let gi = 0;
+    const glitchInterval = setInterval(() => {
+      loaderPct.textContent = glitchValues[gi] || '58%';
+      gi++;
+      if (gi >= glitchValues.length) {
+        clearInterval(glitchInterval);
+        loaderPct.textContent = '58%';
+      }
+    }, 60);
+  } else if (loaderPct) {
+    loaderPct.textContent = pct + '%';
+  }
+  
   if (loaderBar) loaderBar.style.width = pct + '%';
   
   // Glitch effect at 58%
@@ -2366,10 +2467,41 @@ function animateLoader() {
     setTimeout(() => loaderGlitch.classList.remove('active'), 300);
   }
   
-  msgIdx++;
-  if (msgIdx < loaderMsgs.length) {
-    setTimeout(animateLoader, 280 + Math.random() * 140);
+  // Destello de luz en mensajes OK
+  if (type === 'ok' && loaderTerminal) {
+    loaderTerminal.classList.add('flash');
+    setTimeout(() => loaderTerminal.classList.remove('flash'), 300);
   }
+  
+  function typeChar() {
+    if (charIdx <= currentText.length) {
+      const visibleText = currentText.slice(0, charIdx);
+      loaderText.innerHTML = `<span class="${spanClass}">${visibleText}</span>`;
+      charIdx++;
+      const speed = 15 + Math.random() * 25; // velocidad variable de typing
+      setTimeout(typeChar, speed);
+    } else {
+      isTyping = false;
+      // ASCII art final al 100%
+      if (pct === 100 && loaderAscii) {
+        loaderAscii.textContent = asciiArt;
+        setTimeout(() => loaderAscii.classList.add('visible'), 100);
+      }
+      setTimeout(onComplete, 200 + Math.random() * 200);
+    }
+  }
+  typeChar();
+}
+
+function animateLoader() {
+  if (msgIdx >= loaderMsgs.length) return;
+  const [msg, pct, type] = loaderMsgs[msgIdx];
+  msgIdx++;
+  typeMessage(msg, type, pct, () => {
+    if (msgIdx < loaderMsgs.length) {
+      animateLoader();
+    }
+  });
 }
 
 // Matrix rain in loader
@@ -2421,7 +2553,7 @@ window.addEventListener('load', () => {
     setTimeout(() => loader.remove(), 800);
     initTerminal();
     initScrollEffects();
-  }, 2800);
+  }, 3200); // Aumentado un poco para dar tiempo al typing
 });
  
 // ─── HAMBURGER ──────────────────────────────────────────────────
