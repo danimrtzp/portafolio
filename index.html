@@ -55,15 +55,53 @@
     position: fixed; inset: 0;
     background: var(--bg);
     z-index: 9999;
+    display: flex;
+    align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  #loader-matrix {
+    position: absolute; inset: 0;
+    z-index: 0;
+    opacity: 0.15;
+  }
+  .loader-content {
+    position: relative; z-index: 1;
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    gap: 20px;
-    overflow: hidden;
+    gap: 16px;
+    width: min(500px, 90vw);
+  }
+  .loader-logo {
+    position: relative;
+    width: clamp(60px, 12vw, 100px);
+    height: clamp(60px, 12vw, 100px);
+    margin-bottom: 8px;
+  }
+  .loader-logo img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    border-radius: 50%;
+    border: 2px solid var(--cyan);
+    box-shadow: 0 0 20px rgba(0,245,255,0.4), 0 0 40px rgba(0,245,255,0.2);
+    animation: logo-pulse 2s ease-in-out infinite;
+  }
+  @keyframes logo-pulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(0,245,255,0.4), 0 0 40px rgba(0,245,255,0.2); }
+    50% { box-shadow: 0 0 30px rgba(0,245,255,0.6), 0 0 60px rgba(0,245,255,0.3); }
+  }
+  .loader-logo-ring {
+    position: absolute; inset: -8px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,245,255,0.3);
+    animation: ring-spin 4s linear infinite;
+  }
+  @keyframes ring-spin {
+    to { transform: rotate(360deg); }
   }
   .loader-name {
     font-family: 'Orbitron', sans-serif;
     font-weight: 900;
-    font-size: clamp(40px, 10vw, 90px);
+    font-size: clamp(32px, 8vw, 72px);
     letter-spacing: clamp(6px, 2vw, 18px);
     color: var(--cyan);
     text-shadow: 0 0 10px rgba(0,245,255,0.6), 0 0 30px rgba(0,245,255,0.3);
@@ -74,26 +112,63 @@
     0%,100%{opacity:1}50%{opacity:0.85}92%{opacity:0.6}93%{opacity:1}
   }
   .loader-bar-wrap {
-    width: min(400px, 80vw);
+    width: 100%;
     height: 3px;
     background: var(--surface);
     border-radius: 2px;
     overflow: hidden;
     position: relative;
+    margin: 8px 0;
   }
   .loader-bar {
     height: 100%;
     width: 0%;
     background: linear-gradient(90deg, var(--purple), var(--cyan), var(--red));
-    animation: loadbar 2.2s ease forwards;
+    transition: width 0.3s ease;
     box-shadow: 0 0 12px var(--cyan);
+    position: relative; z-index: 1;
   }
-  @keyframes loadbar { to { width: 100%; } }
-  .loader-text {
+  .loader-bar-glitch {
+    position: absolute; top: 0; left: 0;
+    height: 100%; width: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,34,68,0.5), transparent);
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  .loader-bar-glitch.active {
+    animation: glitch-bar 0.3s ease;
+  }
+  @keyframes glitch-bar {
+    0% { transform: translateX(-100%); opacity: 0; }
+    20% { transform: translateX(0%); opacity: 1; }
+    40% { transform: translateX(-30%); opacity: 0.5; }
+    60% { transform: translateX(10%); opacity: 0.8; }
+    80% { transform: translateX(-50%); opacity: 0.3; }
+    100% { transform: translateX(100%); opacity: 0; }
+  }
+  .loader-terminal {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
+    font-size: 12px;
     color: var(--cyan-dim);
     min-height: 20px;
+    width: 100%;
+    text-align: left;
+    padding: 0 8px;
+  }
+  .loader-term-line {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .loader-term-line .term-prompt {
+    color: var(--green);
+  }
+  .loader-term-line .term-ok {
+    color: var(--green);
+  }
+  .loader-term-line .term-warn {
+    color: var(--red);
+  }
+  .loader-term-line .term-cmd {
+    color: var(--cyan);
   }
   .loader-pct {
     font-family: 'Share Tech Mono', monospace;
@@ -1436,12 +1511,22 @@
  
 <!-- LOADER -->
 <div id="loader">
-  <div class="loader-name">DANIMRTZP</div>
-  <div class="loader-bar-wrap">
-    <div class="loader-bar"></div>
+  <canvas id="loader-matrix"></canvas>
+  <div class="loader-content">
+    <div class="loader-logo">
+      <img src="imagen.png" alt="danimrtzp">
+      <div class="loader-logo-ring"></div>
+    </div>
+    <div class="loader-name">DANIMRTZP</div>
+    <div class="loader-bar-wrap">
+      <div class="loader-bar" id="loader-bar"></div>
+      <div class="loader-bar-glitch" id="loader-glitch"></div>
+    </div>
+    <div class="loader-terminal">
+      <div class="loader-term-line" id="loader-msg"><span class="term-prompt">root@danimrtzp:~#</span> Initializing...</div>
+    </div>
+    <div class="loader-pct" id="loader-pct">0%</div>
   </div>
-  <div class="loader-text" id="loader-msg">Initializing...</div>
-  <div class="loader-pct" id="loader-pct">0%</div>
 </div>
  
 <!-- SCROLL PROGRESS -->
@@ -2251,41 +2336,92 @@ function setLang(lang) {
  
 // ─── LOADER ─────────────────────────────────────────────────────
 const loaderMsgs = [
-  ['Initializing kernel modules...', 5],
-  ['Loading exploit framework...', 15],
-  ['Scanning local network...', 28],
-  ['Bypassing firewall rules...', 42],
-  ['Establishing secure connection...', 58],
-  ['Decrypting payload...', 71],
-  ['Mounting root filesystem...', 85],
-  ['Access granted. Welcome, danimrtzp.', 100],
+  ['[OK] Initializing kernel modules...', 5, 'ok'],
+  ['[OK] Loading exploit framework...', 15, 'ok'],
+  ['[OK] Scanning local network...', 28, 'ok'],
+  ['[OK] Bypassing firewall rules...', 42, 'ok'],
+  ['[WARN] Anomaly detected... [FIXED]', 58, 'warn'],
+  ['[OK] Establishing secure connection...', 71, 'ok'],
+  ['[OK] Decrypting payload...', 85, 'ok'],
+  ['[OK] Access granted. Welcome, danimrtzp.', 100, 'ok'],
 ];
- 
+
 let msgIdx = 0;
 const loaderMsg = document.getElementById('loader-msg');
 const loaderPct = document.getElementById('loader-pct');
- 
+const loaderBar = document.getElementById('loader-bar');
+const loaderGlitch = document.getElementById('loader-glitch');
+
 function animateLoader() {
   if (msgIdx >= loaderMsgs.length) return;
-  const [msg, pct] = loaderMsgs[msgIdx];
-  loaderMsg.textContent = msg;
+  const [msg, pct, type] = loaderMsgs[msgIdx];
+  const spanClass = type === 'warn' ? 'term-warn' : 'term-ok';
+  loaderMsg.innerHTML = `<span class="term-prompt">root@danimrtzp:~#</span> <span class="${spanClass}">${msg}</span>`;
   loaderPct.textContent = pct + '%';
+  if (loaderBar) loaderBar.style.width = pct + '%';
+  
+  // Glitch effect at 58%
+  if (pct === 58 && loaderGlitch) {
+    loaderGlitch.classList.add('active');
+    setTimeout(() => loaderGlitch.classList.remove('active'), 300);
+  }
+  
   msgIdx++;
   if (msgIdx < loaderMsgs.length) {
-    setTimeout(animateLoader, 260 + Math.random() * 120);
+    setTimeout(animateLoader, 280 + Math.random() * 140);
   }
 }
+
+// Matrix rain in loader
+(function() {
+  const canvas = document.getElementById('loader-matrix');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, cols, drops = [];
+  const fontSize = 14;
+  const chars = '$#>/-{}[]01=+*?;:%&';
+  const colors = ['#00f5ff', '#9d4edd', '#ff2244'];
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    cols = Math.floor(W / fontSize);
+    drops = [];
+    for (let i = 0; i < cols; i++) drops[i] = Math.random() * -100;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  function drawMatrix() {
+    ctx.fillStyle = 'rgba(5, 10, 15, 0.05)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.font = fontSize + 'px "Share Tech Mono", monospace';
+    for (let i = 0; i < drops.length; i++) {
+      const char = chars[Math.floor(Math.random() * chars.length)];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      ctx.fillStyle = color;
+      ctx.globalAlpha = 0.3 + Math.random() * 0.7;
+      ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > H && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+    ctx.globalAlpha = 1;
+  }
+  let interval = setInterval(drawMatrix, 50);
+  window.addEventListener('load', () => {
+    setTimeout(() => clearInterval(interval), 3000);
+  });
+})();
+
 animateLoader();
- 
+
 window.addEventListener('load', () => {
   setTimeout(() => {
     const loader = document.getElementById('loader');
-    loader.style.transition = 'opacity 0.6s';
+    loader.style.transition = 'opacity 0.8s ease';
     loader.style.opacity = '0';
-    setTimeout(() => loader.remove(), 700);
+    setTimeout(() => loader.remove(), 800);
     initTerminal();
     initScrollEffects();
-  }, 2400);
+  }, 2800);
 });
  
 // ─── HAMBURGER ──────────────────────────────────────────────────
