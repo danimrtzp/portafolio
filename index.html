@@ -2443,21 +2443,7 @@ function typeMessage(msg, type, pct, onComplete) {
   charIdx = 0;
   isTyping = true;
   
-  // Glitch de porcentaje en el 58%
-  if (pct === 58 && loaderPct) {
-    const glitchValues = ['87%', '12%', '64%', '33%', '58%'];
-    let gi = 0;
-    const glitchInterval = setInterval(() => {
-      loaderPct.textContent = glitchValues[gi] || '58%';
-      gi++;
-      if (gi >= glitchValues.length) {
-        clearInterval(glitchInterval);
-        loaderPct.textContent = '58%';
-      }
-    }, 60);
-  } else if (loaderPct) {
-    loaderPct.textContent = pct + '%';
-  }
+  if (loaderPct) loaderPct.textContent = pct + '%';
   
   if (loaderBar) loaderBar.style.width = pct + '%';
   
