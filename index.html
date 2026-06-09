@@ -389,15 +389,16 @@
     color: var(--cyan);
     border: 1px solid var(--cyan-dark);
   }
-  /* SVG flags inline - v2 */
+  /* SVG flags inline - v3 cache-bust */
   .flag-icon {
     width: 22px;
     height: 15px;
     border-radius: 2px;
     flex-shrink: 0;
     border: 1px solid rgba(255,255,255,0.15);
-    display: inline-block;
+    display: inline-block !important;
     vertical-align: middle;
+    overflow: hidden;
   }
   .flag-icon svg {
     width: 100%;
@@ -405,6 +406,9 @@
     border-radius: 2px;
     display: block;
   }
+  /* Force hide old emoji flags if any */
+  .lang-toggle .flag { display: none !important; }
+  .lang-option .flag { display: none !important; }
   .hamburger {
     display: none;
     background: none; border: none;
