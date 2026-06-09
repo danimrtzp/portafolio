@@ -2034,25 +2034,81 @@
       box-shadow: 0 0 6px var(--cyan);
     }
 
-    /* ── Audio Toggle Button ── */
-    .audio-toggle {
+    /* ── FAB (Floating Action Button) ── */
+    .fab-container {
       position: fixed;
       bottom: 20px;
       right: 8px;
       z-index: 1000;
-      width: 40px;
-      height: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+    .fab-main {
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text-dim);
-      font-size: 16px;
+      background: linear-gradient(135deg, var(--cyan-dark), var(--cyan));
+      border: 2px solid var(--cyan);
+      color: var(--bg);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 24px;
+      font-weight: 900;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s ease, transform 0.3s ease;
-      margin-bottom: 70px;
+      box-shadow: 0 4px 20px rgba(0,245,255,0.3), 0 0 40px rgba(0,245,255,0.15);
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    .fab-main:active {
+      transform: scale(0.95);
+    }
+    .fab-main.open {
+      transform: rotate(45deg);
+      background: var(--red);
+      border-color: var(--red);
+      box-shadow: 0 4px 20px rgba(255,34,68,0.3);
+    }
+    .fab-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      opacity: 0;
+      transform: translateY(10px) scale(0.9);
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    .fab-menu.open {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: all;
+    }
+    .fab-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      text-decoration: none;
+      letter-spacing: 1px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .fab-item:active {
+      transform: scale(0.95);
+      border-color: var(--cyan);
+      background: rgba(0,245,255,0.08);
+    }
+    .fab-item span {
+      font-size: 16px;
     }
   }
 
@@ -2119,8 +2175,18 @@
   <div class="progress-bar"><div class="progress-bar-fill" id="pullRefreshBar"></div></div>
 </div>
 
+<!-- FAB QUICK LINKS (mobile only) -->
+<div class="fab-container" id="fabContainer">
+  <div class="fab-menu" id="fabMenu">
+    <a class="fab-item" href="https://github.com/danimrtzp" target="_blank"><span>⚡</span> GitHub</a>
+    <a class="fab-item" href="https://www.linkedin.com/in/daniel-mart%C3%ADnez-pinedo" target="_blank"><span>🔗</span> LinkedIn</a>
+    <a class="fab-item" href="writeups/index.html"><span>📝</span> Writeups</a>
+    <a class="fab-item" href="#contact"><span>📡</span> Contact</a>
+    <a class="fab-item" href="#hero"><span>↑</span> Top</a>
+  </div>
+  <button class="fab-main" id="fabMain" onclick="toggleFab()">+</button>
+</div>
 
-  
 <!-- NAV -->
 <nav id="navbar">
   <a class="nav-logo" href="#hero">DANIMRTZP</a>
@@ -3771,6 +3837,15 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   if (blogGrid) addDots(blogGrid, 'blog-card');
   if (certsGrid) addDots(certsGrid, 'cert-card');
 })();
+
+// ─── FAB TOGGLE ───────────────────────────────────────────────────
+function toggleFab() {
+  const menu = document.getElementById('fabMenu');
+  const btn = document.getElementById('fabMain');
+  menu.classList.toggle('open');
+  btn.classList.toggle('open');
+  btn.textContent = btn.classList.contains('open') ? '×' : '+';
+}
 
 </script>
 </body>
