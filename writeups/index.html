@@ -65,7 +65,18 @@
   .plat-grid {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 24px;
   }
-  @media(max-width:768px) { .plat-grid { grid-template-columns: 1fr; gap: 16px; } }
+  @media(max-width:768px) {
+    .plat-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .plat-card { padding: 20px 14px; gap: 10px; }
+    .plat-icon { width: 36px; height: 36px; }
+    .plat-icon img { width: 28px; height: 28px; }
+    .plat-name { font-size: 12px; letter-spacing: 1px; }
+    .plat-desc { font-size: 10px; }
+    .plat-count { font-size: 9px; padding: 3px 8px; }
+    .wu-title { font-size: clamp(24px, 8vw, 40px); }
+    .wu-subtitle { font-size: 12px; }
+    .wu-count { font-size: 12px; padding: 6px 14px; }
+  }
   .plat-card {
     background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
     padding: 32px 24px; text-decoration: none; display: flex; flex-direction: column;
@@ -111,7 +122,32 @@
   ::-webkit-scrollbar-track { background: var(--bg2); }
   ::-webkit-scrollbar-thumb { background: var(--cyan-dark); border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
-  
+
+  /* ── FAB (mobile only) ── */
+  .fab-container { display: none; }
+  @media(max-width:768px) {
+    .fab-container {
+      display: flex; position: fixed; bottom: 20px; right: 8px;
+      z-index: 1000; flex-direction: column; align-items: flex-end; gap: 10px;
+    }
+    .fab-main {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--cyan-dark), var(--cyan));
+      border: 2px solid var(--cyan); color: var(--bg);
+      font-family: 'Orbitron', sans-serif; font-size: 24px; font-weight: 900;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px rgba(0,245,255,0.3), 0 0 40px rgba(0,245,255,0.15);
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    .fab-main:active { transform: scale(0.95); }
+    .fab-main.open { transform: rotate(45deg); background: var(--red); border-color: var(--red); box-shadow: 0 4px 20px rgba(255,34,68,0.3); }
+    .fab-menu { display: flex; flex-direction: column; gap: 8px; opacity: 0; transform: translateY(10px) scale(0.9); pointer-events: none; transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+    .fab-menu.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
+    .fab-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-family: 'Share Tech Mono', monospace; font-size: 11px; text-decoration: none; letter-spacing: 1px; transition: all 0.2s ease; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+    .fab-item:active { transform: scale(0.95); border-color: var(--cyan); background: rgba(0,245,255,0.08); }
+    .fab-item span { font-size: 16px; }
+  }
+
   /* Matrix Canvas */
   #matrix-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.15; }
   
@@ -234,7 +270,24 @@
 })();
 </script>
 
+<!-- FAB (mobile only) -->
+<div class="fab-container" id="fabContainer">
+  <div class="fab-menu" id="fabMenu">
+    <a class="fab-item" href="../index.html"><span>🏠</span> Home</a>
+    <a class="fab-item" href="#hero"><span>↑</span> Top</a>
+  </div>
+  <button class="fab-main" id="fabMain" onclick="toggleFab()">+</button>
+</div>
 
+<script>
+function toggleFab() {
+  const menu = document.getElementById('fabMenu');
+  const btn = document.getElementById('fabMain');
+  menu.classList.toggle('open');
+  btn.classList.toggle('open');
+  btn.textContent = btn.classList.contains('open') ? '×' : '+';
+}
+</script>
 
 </body>
 </html>
