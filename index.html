@@ -251,14 +251,21 @@
     pointer-events: none;
     z-index: 0;
   }
+
   /* ── VIGNETTE GLOW MOBILE ONLY ── */
+  .vignette {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    display: none;
+  }
   @media (max-width: 768px) {
-    body::before {
-      z-index: 9999;
+    .vignette {
+      display: block;
       box-shadow:
-        inset 0 0 40px rgba(0, 245, 255, 0.22),
-        inset 0 0 20px rgba(157, 78, 221, 0.15),
-        inset 0 0 10px rgba(255, 34, 68, 0.10);
+        inset 0 0 60px rgba(0, 245, 255, 0.10),
+        inset 0 0 30px rgba(157, 78, 221, 0.08);
     }
   }
  
@@ -1675,6 +1682,9 @@
 </head>
 <body>
   
+  <!-- VIGNETTE GLOW (mobile only) -->
+  <div class="vignette"></div>
+
 <!-- MATRIX RAIN -->
 <canvas id="matrix-canvas"></canvas>
 
