@@ -1717,24 +1717,24 @@
     <div class="lang-dropdown" id="langDropdown">
       <button class="lang-toggle" onclick="toggleLangDropdown()">
         <span class="flag-icon" id="currentFlag">
-          <img src="images/flags/flag-es.png" alt="ES" class="flag-img">
+          <img src="images/flags/flag-es.png?v=3" alt="ES" class="flag-img">
         </span>
         <span class="arrow">▼</span>
       </button>
       <div class="lang-menu">
         <button class="lang-option active" onclick="setLang('es')" data-lang="es">
           <span class="flag-icon">
-            <img src="images/flags/flag-es.png" alt="ES" class="flag-img">
+            <img src="images/flags/flag-es.png?v=3" alt="ES" class="flag-img">
           </span> Español
         </button>
         <button class="lang-option" onclick="setLang('en')" data-lang="en">
           <span class="flag-icon">
-            <img src="images/flags/flag-uk.png" alt="EN" class="flag-img">
+            <img src="images/flags/flag-uk.png?v=3" alt="EN" class="flag-img">
           </span> English
         </button>
         <button class="lang-option" onclick="setLang('ca')" data-lang="ca">
           <span class="flag-icon">
-            <img src="images/flags/flag-ca.png" alt="CA" class="flag-img">
+            <img src="images/flags/flag-ca.png?v=3" alt="CA" class="flag-img">
           </span> Català
         </button>
       </div>
@@ -2507,9 +2507,9 @@ const i18n = {
  
 let currentLang = 'es';
 const flagMap = {
-  es: '<img src="images/flags/flag-es.png" alt="ES" class="flag-img">',
-  en: '<img src="images/flags/flag-uk.png" alt="EN" class="flag-img">',
-  ca: '<img src="images/flags/flag-ca.png" alt="CA" class="flag-img">'
+  es: '<img src="images/flags/flag-es.png?v=3" alt="ES" class="flag-img">',
+  en: '<img src="images/flags/flag-uk.png?v=3" alt="EN" class="flag-img">',
+  ca: '<img src="images/flags/flag-ca.png?v=3" alt="CA" class="flag-img">'
 };
 
 function setLang(lang) {
