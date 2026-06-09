@@ -2420,6 +2420,7 @@ let msgIdx = 0;
 let currentText = '';
 let charIdx = 0;
 let isTyping = false;
+let loaderFinished = false;
 const loaderMsg = document.getElementById('loader-msg');
 const loaderText = document.getElementById('loader-text');
 const loaderPct = document.getElementById('loader-pct');
@@ -2437,6 +2438,20 @@ const loaderAscii = document.getElementById('loader-ascii');
   }
 })();
 
+function finishLoader() {
+  if (loaderFinished) return;
+  loaderFinished = true;
+  // Esperar a que se vea el ASCII art, luego fade out
+  setTimeout(() => {
+    const loader = document.getElementById('loader');
+    loader.style.transition = 'opacity 0.8s ease';
+    loader.style.opacity = '0';
+    setTimeout(() => loader.remove(), 800);
+    initTerminal();
+    initScrollEffects();
+  }, 900);
+}
+
 function typeMessage(msg, type, pct, onComplete) {
   const spanClass = type === 'warn' ? 'term-warn' : 'term-ok';
   currentText = msg;
@@ -2444,7 +2459,6 @@ function typeMessage(msg, type, pct, onComplete) {
   isTyping = true;
   
   if (loaderPct) loaderPct.textContent = pct + '%';
-  
   if (loaderBar) loaderBar.style.width = pct + '%';
   
   // Glitch effect at 58%
@@ -2464,29 +2478,31 @@ function typeMessage(msg, type, pct, onComplete) {
       const visibleText = currentText.slice(0, charIdx);
       loaderText.innerHTML = `<span class="${spanClass}">${visibleText}</span>`;
       charIdx++;
-      const speed = 15 + Math.random() * 25; // velocidad variable de typing
+      const speed = 20 + Math.random() * 30; // velocidad variable de typing
       setTimeout(typeChar, speed);
     } else {
       isTyping = false;
       // ASCII art final al 100%
       if (pct === 100 && loaderAscii) {
         loaderAscii.textContent = asciiArt;
-        setTimeout(() => loaderAscii.classList.add('visible'), 100);
+        loaderAscii.classList.add('visible');
       }
-      setTimeout(onComplete, 200 + Math.random() * 200);
+      setTimeout(onComplete, 350 + Math.random() * 250);
     }
   }
   typeChar();
 }
 
 function animateLoader() {
-  if (msgIdx >= loaderMsgs.length) return;
+  if (msgIdx >= loaderMsgs.length) {
+    // Todos los mensajes completados, esperar un poco y finalizar
+    setTimeout(finishLoader, 600);
+    return;
+  }
   const [msg, pct, type] = loaderMsgs[msgIdx];
   msgIdx++;
   typeMessage(msg, type, pct, () => {
-    if (msgIdx < loaderMsgs.length) {
-      animateLoader();
-    }
+    animateLoader();
   });
 }
 
@@ -2530,17 +2546,6 @@ function animateLoader() {
 })();
 
 animateLoader();
-
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    const loader = document.getElementById('loader');
-    loader.style.transition = 'opacity 0.8s ease';
-    loader.style.opacity = '0';
-    setTimeout(() => loader.remove(), 800);
-    initTerminal();
-    initScrollEffects();
-  }, 3200); // Aumentado un poco para dar tiempo al typing
-});
  
 // ─── HAMBURGER ──────────────────────────────────────────────────
 document.getElementById('hamburger').addEventListener('click', () => {
