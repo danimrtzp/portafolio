@@ -39,6 +39,11 @@
     font-family: 'Rajdhani', sans-serif;
     overflow-x: hidden;
     cursor: default;
+    min-height: 100vh;
+    box-shadow:
+      inset 0 0 120px rgba(0,245,255,0.035),
+      inset 0 0 60px rgba(157,78,221,0.025),
+      inset 0 0 30px rgba(255,34,68,0.015);
   }
  
   /* ── MATRIX CANVAS ── */
@@ -2591,12 +2596,12 @@ function finishLoader() {
   // Esperar a que se vea el ASCII art, luego fade out
   setTimeout(() => {
     const loader = document.getElementById('loader');
-    loader.style.transition = 'opacity 0.6s ease';
+    loader.style.transition = 'opacity 0.5s ease';
     loader.style.opacity = '0';
-    setTimeout(() => loader.remove(), 600);
+    setTimeout(() => loader.remove(), 500);
     initTerminal();
     initScrollEffects();
-  }, 400);
+  }, 200);
 }
 
 function typeMessage(msg, type, pct, onComplete) {
@@ -2625,7 +2630,7 @@ function typeMessage(msg, type, pct, onComplete) {
       const visibleText = currentText.slice(0, charIdx);
       loaderText.innerHTML = `<span class="${spanClass}">${visibleText}</span>`;
       charIdx++;
-      const speed = 10 + Math.random() * 15; // velocidad variable de typing
+      const speed = 5 + Math.random() * 8; // velocidad variable de typing (más rápido)
       setTimeout(typeChar, speed);
     } else {
       isTyping = false;
@@ -2634,7 +2639,7 @@ function typeMessage(msg, type, pct, onComplete) {
         loaderAscii.textContent = asciiArt;
         loaderAscii.classList.add('visible');
       }
-      setTimeout(onComplete, 150 + Math.random() * 150);
+      setTimeout(onComplete, 80 + Math.random() * 80);
     }
   }
   typeChar();
@@ -2643,7 +2648,7 @@ function typeMessage(msg, type, pct, onComplete) {
 function animateLoader() {
   if (msgIdx >= loaderMsgs.length) {
     // Todos los mensajes completados, esperar un poco y finalizar
-    setTimeout(finishLoader, 250);
+    setTimeout(finishLoader, 120);
     return;
   }
   const [msg, pct, type] = loaderMsgs[msgIdx];
