@@ -389,7 +389,7 @@
     color: var(--cyan);
     border: 1px solid var(--cyan-dark);
   }
-  /* SVG flags inline - v3 cache-bust */
+  /* PNG flags inline */
   .flag-icon {
     width: 22px;
     height: 15px;
@@ -405,6 +405,13 @@
     height: 100%;
     border-radius: 2px;
     display: block;
+  }
+  .flag-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 2px;
+    display: block;
+    object-fit: cover;
   }
   /* Force hide old emoji flags if any */
   .lang-toggle .flag { display: none !important; }
@@ -1710,46 +1717,24 @@
     <div class="lang-dropdown" id="langDropdown">
       <button class="lang-toggle" onclick="toggleLangDropdown()">
         <span class="flag-icon" id="currentFlag">
-          <svg viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
-            <rect width="30" height="5" fill="#aa151b"/>
-            <rect y="5" width="30" height="10" fill="#f1bf00"/>
-            <rect y="15" width="30" height="5" fill="#aa151b"/>
-          </svg>
+          <img src="images/flags/flag-es.png" alt="ES" class="flag-img">
         </span>
         <span class="arrow">▼</span>
       </button>
       <div class="lang-menu">
         <button class="lang-option active" onclick="setLang('es')" data-lang="es">
           <span class="flag-icon">
-            <svg viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
-              <rect width="30" height="5" fill="#aa151b"/>
-              <rect y="5" width="30" height="10" fill="#f1bf00"/>
-              <rect y="15" width="30" height="5" fill="#aa151b"/>
-            </svg>
+            <img src="images/flags/flag-es.png" alt="ES" class="flag-img">
           </span> Español
         </button>
         <button class="lang-option" onclick="setLang('en')" data-lang="en">
           <span class="flag-icon">
-            <svg viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
-              <rect width="30" height="20" fill="#012169"/>
-              <path d="M0 0 L30 20 M30 0 L0 20" stroke="#fff" stroke-width="3"/>
-              <path d="M0 0 L30 20 M30 0 L0 20" stroke="#c8102e" stroke-width="2"/>
-              <path d="M15 0 V20 M0 10 H30" stroke="#fff" stroke-width="5"/>
-              <path d="M15 0 V20 M0 10 H30" stroke="#c8102e" stroke-width="3"/>
-            </svg>
+            <img src="images/flags/flag-uk.png" alt="EN" class="flag-img">
           </span> English
         </button>
         <button class="lang-option" onclick="setLang('ca')" data-lang="ca">
           <span class="flag-icon">
-            <svg viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
-              <rect width="30" height="2.86" fill="#c8102e"/>
-              <rect y="2.86" width="30" height="2.86" fill="#fcdd09"/>
-              <rect y="5.72" width="30" height="2.86" fill="#c8102e"/>
-              <rect y="8.58" width="30" height="2.86" fill="#fcdd09"/>
-              <rect y="11.44" width="30" height="2.86" fill="#c8102e"/>
-              <rect y="14.3" width="30" height="2.86" fill="#fcdd09"/>
-              <rect y="17.16" width="30" height="2.84" fill="#c8102e"/>
-            </svg>
+            <img src="images/flags/flag-ca.png" alt="CA" class="flag-img">
           </span> Català
         </button>
       </div>
@@ -2522,9 +2507,9 @@ const i18n = {
  
 let currentLang = 'es';
 const flagMap = {
-  es: '<svg viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg"><rect width="30" height="5" fill="#aa151b"/><rect y="5" width="30" height="10" fill="#f1bf00"/><rect y="15" width="30" height="5" fill="#aa151b"/></svg>',
-  en: '<svg viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg"><rect width="30" height="20" fill="#012169"/><path d="M0 0 L30 20 M30 0 L0 20" stroke="#fff" stroke-width="3"/><path d="M0 0 L30 20 M30 0 L0 20" stroke="#c8102e" stroke-width="2"/><path d="M15 0 V20 M0 10 H30" stroke="#fff" stroke-width="5"/><path d="M15 0 V20 M0 10 H30" stroke="#c8102e" stroke-width="3"/></svg>',
-  ca: '<svg viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg"><rect width="30" height="2.86" fill="#c8102e"/><rect y="2.86" width="30" height="2.86" fill="#fcdd09"/><rect y="5.72" width="30" height="2.86" fill="#c8102e"/><rect y="8.58" width="30" height="2.86" fill="#fcdd09"/><rect y="11.44" width="30" height="2.86" fill="#c8102e"/><rect y="14.3" width="30" height="2.86" fill="#fcdd09"/><rect y="17.16" width="30" height="2.84" fill="#c8102e"/></svg>'
+  es: '<img src="images/flags/flag-es.png" alt="ES" class="flag-img">',
+  en: '<img src="images/flags/flag-uk.png" alt="EN" class="flag-img">',
+  ca: '<img src="images/flags/flag-ca.png" alt="CA" class="flag-img">'
 };
 
 function setLang(lang) {
