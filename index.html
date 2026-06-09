@@ -2444,12 +2444,12 @@ function finishLoader() {
   // Esperar a que se vea el ASCII art, luego fade out
   setTimeout(() => {
     const loader = document.getElementById('loader');
-    loader.style.transition = 'opacity 0.8s ease';
+    loader.style.transition = 'opacity 0.6s ease';
     loader.style.opacity = '0';
-    setTimeout(() => loader.remove(), 800);
+    setTimeout(() => loader.remove(), 600);
     initTerminal();
     initScrollEffects();
-  }, 900);
+  }, 400);
 }
 
 function typeMessage(msg, type, pct, onComplete) {
@@ -2478,7 +2478,7 @@ function typeMessage(msg, type, pct, onComplete) {
       const visibleText = currentText.slice(0, charIdx);
       loaderText.innerHTML = `<span class="${spanClass}">${visibleText}</span>`;
       charIdx++;
-      const speed = 20 + Math.random() * 30; // velocidad variable de typing
+      const speed = 10 + Math.random() * 15; // velocidad variable de typing
       setTimeout(typeChar, speed);
     } else {
       isTyping = false;
@@ -2487,7 +2487,7 @@ function typeMessage(msg, type, pct, onComplete) {
         loaderAscii.textContent = asciiArt;
         loaderAscii.classList.add('visible');
       }
-      setTimeout(onComplete, 350 + Math.random() * 250);
+      setTimeout(onComplete, 150 + Math.random() * 150);
     }
   }
   typeChar();
@@ -2496,7 +2496,7 @@ function typeMessage(msg, type, pct, onComplete) {
 function animateLoader() {
   if (msgIdx >= loaderMsgs.length) {
     // Todos los mensajes completados, esperar un poco y finalizar
-    setTimeout(finishLoader, 600);
+    setTimeout(finishLoader, 250);
     return;
   }
   const [msg, pct, type] = loaderMsgs[msgIdx];
