@@ -1330,11 +1330,11 @@
   .about-card:hover, .skill-cat:hover, .project-card:hover, .blog-card:hover, .cert-obtained:hover, .edu-card:hover, .learn-card:hover, .platform-card:hover, .contact-link:hover {
     transform: translateY(-6px);
   }
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg2); }
-  ::-webkit-scrollbar-thumb { background: var(--cyan-dark); border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
+  /* ── Custom Scrollbar (global) ── */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--cyan-dark), var(--purple-dim)); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, var(--cyan), var(--purple)); }
  
   /* ── RESPONSIVE NAV ── */
   .nav-right {
@@ -1677,7 +1677,401 @@
     display: flex; flex-direction: column; gap: 12px;
     max-width: 600px;
   }
- 
+
+  /* ═══════════════════════════════════════════════════════════════
+     MOBILE ENHANCEMENTS — cyberpunk feel without desktop effects
+     ═══════════════════════════════════════════════════════════════ */
+  @media (max-width: 768px) {
+
+    /* ── Staggered reveal animations ── */
+    @keyframes slideInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-30px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(30px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes borderGlow {
+      0%   { box-shadow: inset 0 0 0 1px rgba(0,245,255,0.1); }
+      50%  { box-shadow: inset 0 0 0 1px rgba(0,245,255,0.35); }
+      100% { box-shadow: inset 0 0 0 1px rgba(0,245,255,0.1); }
+    }
+
+    /* Cards entrance animation */
+    .about-card, .skill-cat, .project-card, .blog-card,
+    .cert-card, .edu-card, .learn-card, .platform-card,
+    .contact-link, .mini-card {
+      opacity: 0;
+      animation: slideInUp 0.7s cubic-bezier(0.4,0,0.2,1) forwards;
+    }
+
+    /* Staggered delays */
+    .about-card:nth-child(1)   { animation-delay: 0.05s; }
+    .about-card:nth-child(2)   { animation-delay: 0.15s; }
+    .skill-cat:nth-child(1)    { animation-delay: 0.05s; }
+    .skill-cat:nth-child(2)    { animation-delay: 0.15s; }
+    .project-card:nth-child(1) { animation-delay: 0.05s; }
+    .project-card:nth-child(2) { animation-delay: 0.15s; }
+    .blog-card:nth-child(1)    { animation-delay: 0.05s; }
+    .blog-card:nth-child(2)    { animation-delay: 0.15s; }
+    .blog-card:nth-child(3)    { animation-delay: 0.25s; }
+    .cert-card:nth-child(1)   { animation-delay: 0.05s; }
+    .cert-card:nth-child(2)   { animation-delay: 0.12s; }
+    .cert-card:nth-child(3)   { animation-delay: 0.19s; }
+    .cert-card:nth-child(4)   { animation-delay: 0.26s; }
+    .edu-item:nth-child(1) .edu-card { animation-delay: 0.05s; }
+    .edu-item:nth-child(2) .edu-card { animation-delay: 0.15s; }
+    .edu-item:nth-child(3) .edu-card { animation-delay: 0.25s; }
+    .learn-card:nth-child(1)  { animation-delay: 0.05s; }
+    .learn-card:nth-child(2)  { animation-delay: 0.10s; }
+    .learn-card:nth-child(3)  { animation-delay: 0.15s; }
+    .learn-card:nth-child(4)  { animation-delay: 0.20s; }
+    .learn-card:nth-child(5)  { animation-delay: 0.25s; }
+    .learn-card:nth-child(6)  { animation-delay: 0.30s; }
+    .platform-card:nth-child(1) { animation-delay: 0.05s; }
+    .platform-card:nth-child(2) { animation-delay: 0.12s; }
+    .platform-card:nth-child(3) { animation-delay: 0.19s; }
+    .platform-card:nth-child(4) { animation-delay: 0.26s; }
+    .contact-link:nth-child(1) { animation-delay: 0.05s; }
+    .contact-link:nth-child(2) { animation-delay: 0.12s; }
+    .contact-link:nth-child(3) { animation-delay: 0.19s; }
+    .contact-link:nth-child(4) { animation-delay: 0.26s; }
+    .mini-card:nth-child(1)   { animation-delay: 0.03s; }
+    .mini-card:nth-child(2)   { animation-delay: 0.06s; }
+    .mini-card:nth-child(3)   { animation-delay: 0.09s; }
+    .mini-card:nth-child(4)   { animation-delay: 0.12s; }
+    .mini-card:nth-child(5)   { animation-delay: 0.15s; }
+    .mini-card:nth-child(6)   { animation-delay: 0.18s; }
+
+    /* ── Active touch glow (no hover) ── */
+    .about-card:active,
+    .skill-cat:active,
+    .project-card:active,
+    .blog-card:active,
+    .cert-card:active,
+    .edu-card:active,
+    .learn-card:active,
+    .platform-card:active,
+    .contact-link:active,
+    .mini-card:active {
+      transform: scale(0.98);
+      transition: transform 0.1s ease;
+    }
+    .about-card:active {
+      border-color: rgba(0,245,255,0.5);
+      box-shadow: 0 0 30px rgba(0,245,255,0.15), inset 0 0 20px rgba(0,245,255,0.05);
+    }
+    .skill-cat:active {
+      border-color: rgba(0,245,255,0.5);
+      box-shadow: 0 0 25px rgba(0,245,255,0.12);
+    }
+    .project-card:active {
+      border-color: rgba(157,78,221,0.6);
+      box-shadow: 0 0 30px rgba(157,78,221,0.2);
+    }
+    .blog-card:active {
+      border-color: rgba(255,34,68,0.5);
+      box-shadow: 0 0 30px rgba(255,34,68,0.15);
+    }
+    .cert-obtained:active {
+      border-color: var(--cyan);
+      box-shadow: 0 0 25px rgba(0,245,255,0.2);
+    }
+    .contact-link:active {
+      border-color: rgba(0,245,255,0.5);
+      box-shadow: 0 0 25px rgba(0,245,255,0.12);
+    }
+    .mini-card:active {
+      border-color: rgba(0,245,255,0.4);
+      box-shadow: 0 0 15px rgba(0,245,255,0.1);
+    }
+
+    /* ── Animated border glow (always visible) ── */
+    .about-card, .project-card, .cert-card, .blog-card {
+      animation: borderGlow 3s ease-in-out infinite;
+    }
+    .project-card { animation-delay: 0.5s; }
+    .blog-card    { animation-delay: 1.0s; }
+    .cert-card    { animation-delay: 1.5s; }
+
+    /* ── Diagonal section dividers ── */
+    section + section {
+      position: relative;
+    }
+    section + section::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), var(--purple), var(--red), transparent);
+      opacity: 0.4;
+    }
+
+    /* ── Section titles glitch pulse ── */
+    .section-title {
+      position: relative;
+    }
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 40px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      animation: sectionLineGrow 3s ease-in-out infinite;
+    }
+    @keyframes sectionLineGrow {
+      0%, 100% { width: 40px; opacity: 0.6; }
+      50% { width: 80px; opacity: 1; }
+    }
+
+    /* ── Terminal section glow ── */
+    .terminal-wrap {
+      box-shadow: 0 0 30px rgba(0,245,255,0.08), 0 0 60px rgba(0,245,255,0.04);
+    }
+
+    /* ── Hero subtitle typing cursor blink faster ── */
+    .hero-subtitle {
+      position: relative;
+    }
+    .hero-subtitle::after {
+      content: '_';
+      animation: blink-cursor 0.5s step-end infinite;
+      color: var(--cyan);
+      margin-left: 2px;
+    }
+
+    /* ── Progress bar more glow ── */
+    .scroll-bar {
+      background: var(--cyan);
+      box-shadow: 0 0 8px rgba(0,245,255,0.4);
+    }
+
+    /* ── Form inputs glow on focus ── */
+    .form-input:focus, .form-textarea:focus {
+      box-shadow: 0 0 0 2px rgba(0,245,255,0.15), 0 0 20px rgba(0,245,255,0.1);
+    }
+
+    /* ── Social icons pulse on load ── */
+    .platform-card {
+      animation: slideInUp 0.7s ease forwards, borderGlow 3s ease-in-out infinite 1s;
+    }
+
+    /* ── Ensure hero avatar flip on tap works ── */
+    .avatar-flip.flipped {
+      transform: rotateY(180deg);
+    }
+
+    /* ── Loading bar on mobile ── */
+    .loader-bar {
+      box-shadow: 0 0 15px var(--cyan);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       NEW MOBILE FEATURES — Swipe, Accordion, FAB, Audio, Scrollbar
+       ═══════════════════════════════════════════════════════════════ */
+
+    /* ── Skills Accordion ── */
+    .skill-cat {
+      cursor: pointer;
+      position: relative;
+    }
+    .skill-cat.collapsed .mini-grid {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+      margin-top: 0;
+    }
+    .skill-cat.expanded .mini-grid {
+      max-height: 600px;
+      opacity: 1;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+      margin-top: 12px;
+    }
+    .skill-cat .accordion-arrow {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      font-size: 14px;
+      color: var(--cyan);
+      transition: transform 0.3s ease;
+      font-family: 'Share Tech Mono', monospace;
+    }
+    .skill-cat.expanded .accordion-arrow {
+      transform: rotate(180deg);
+    }
+    .skill-cat.collapsed {
+      padding-bottom: 14px;
+    }
+    .skill-cat-name {
+      padding-right: 24px;
+    }
+
+    /* ── Projects Carousel ── */
+    .projects-grid {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      gap: 16px;
+      padding: 0 16px 20px 16px;
+      margin: 0 -16px;
+      scrollbar-width: none;
+    }
+    .projects-grid::-webkit-scrollbar {
+      display: none;
+    }
+    .project-card {
+      flex: 0 0 85vw;
+      min-width: 280px;
+      scroll-snap-align: center;
+      margin-bottom: 0;
+    }
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .carousel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+    .carousel-dot.active {
+      background: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan);
+      transform: scale(1.2);
+    }
+    /* ── Blog grid as horizontal scroll ── */
+    .blog-grid {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      gap: 14px;
+      padding: 0 16px 16px 16px;
+      margin: 0 -16px;
+      scrollbar-width: none;
+    }
+    .blog-grid::-webkit-scrollbar {
+      display: none;
+    }
+    .blog-card {
+      flex: 0 0 80vw;
+      min-width: 260px;
+      scroll-snap-align: center;
+    }
+
+    /* ── Certs grid as horizontal scroll ── */
+    .certs-grid {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      gap: 14px;
+      padding: 0 16px 16px 16px;
+      margin: 0 -16px;
+      scrollbar-width: none;
+    }
+    .certs-grid::-webkit-scrollbar {
+      display: none;
+    }
+    .cert-card {
+      flex: 0 0 70vw;
+      min-width: 220px;
+      scroll-snap-align: center;
+    }
+
+    /* ── Pull to Refresh Terminal ── */
+    .pull-refresh {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 9998;
+      background: rgba(5,10,15,0.98);
+      border-bottom: 1px solid var(--cyan-dark);
+      padding: 12px 16px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      color: var(--cyan);
+    }
+    .pull-refresh.visible {
+      display: flex;
+    }
+    .pull-refresh .progress-bar {
+      flex: 1;
+      height: 2px;
+      background: var(--surface);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .pull-refresh .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--cyan);
+      transition: width 0.1s linear;
+      box-shadow: 0 0 6px var(--cyan);
+    }
+
+    /* ── Audio Toggle Button ── */
+    .audio-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 8px;
+      z-index: 1000;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease, transform 0.3s ease;
+      margin-bottom: 70px;
+    }
+  }
+
+  /* ── Custom scrollbar for mobile browsers ── */
+  ::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0,245,255,0.25);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0,245,255,0.45);
+  }
+  
 </style>
 </head>
 <body>
@@ -1718,7 +2112,15 @@
  
 <!-- SCROLL PROGRESS -->
 <div class="scroll-progress"><div class="scroll-bar" id="scrollBar"></div></div>
- 
+
+<!-- PULL TO REFRESH (mobile only) -->
+<div class="pull-refresh" id="pullRefresh">
+  <span>&gt; reloading system...</span>
+  <div class="progress-bar"><div class="progress-bar-fill" id="pullRefreshBar"></div></div>
+</div>
+
+
+  
 <!-- NAV -->
 <nav id="navbar">
   <a class="nav-logo" href="#hero">DANIMRTZP</a>
@@ -3142,6 +3544,234 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     });
   });
 })();
+
+// ─── MOBILE SCROLL TRIGGERED ANIMATIONS ───────────────────────
+(function() {
+  if (window.innerWidth > 768) return;
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+  
+  document.querySelectorAll('.about-card, .skill-cat, .project-card, .blog-card, .cert-card, .edu-card, .learn-card, .platform-card, .contact-link, .mini-card').forEach(el => {
+    observer.observe(el);
+  });
+})();
+
+// ─── MOBILE GLITCH ON SECTION TITLES ───────────────────────────
+(function() {
+  if (window.innerWidth > 768) return;
+  
+  const titles = document.querySelectorAll('.section-title');
+  
+  setInterval(() => {
+    const randomTitle = titles[Math.floor(Math.random() * titles.length)];
+    if (!randomTitle) return;
+    
+    const originalText = randomTitle.textContent;
+    const glitchChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+    let iterations = 0;
+    const maxIterations = 8;
+    
+    const interval = setInterval(() => {
+      randomTitle.textContent = originalText.split('')
+        .map((char, index) => {
+          if (index < iterations) return originalText[index];
+          if (char === ' ') return ' ';
+          return glitchChars[Math.floor(Math.random() * glitchChars.length)];
+        })
+        .join('');
+      
+      iterations += 1/2;
+      
+      if (iterations >= originalText.length) {
+        clearInterval(interval);
+        randomTitle.textContent = originalText;
+      }
+    }, 30);
+  }, 8000);
+})();
+
+// ─── MOBILE TOUCH RIPPLE EFFECT ───────────────────────────────
+(function() {
+  if (window.innerWidth > 768) return;
+  
+  const cards = document.querySelectorAll('.about-card, .skill-cat, .project-card, .blog-card, .cert-card, .contact-link, .mini-card');
+  
+  cards.forEach(card => {
+    card.addEventListener('touchstart', function(e) {
+      const rect = card.getBoundingClientRect();
+      const touch = e.touches[0];
+      const x = touch.clientX - rect.left;
+      const y = touch.clientY - rect.top;
+      
+      const ripple = document.createElement('span');
+      ripple.style.cssText = `
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(0,245,255,0.15);
+        transform: scale(0);
+        animation: rippleEffect 0.5s ease-out;
+        pointer-events: none;
+        width: 100px;
+        height: 100px;
+        left: ${x - 50}px;
+        top: ${y - 50}px;
+      `;
+      card.appendChild(ripple);
+      
+      setTimeout(() => ripple.remove(), 500);
+    });
+  });
+  
+  // Add ripple keyframe
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes rippleEffect {
+      to { transform: scale(3); opacity: 0; }
+    }
+  `;
+  document.head.appendChild(style);
+})();
+
+// ─── HAPTIC FEEDBACK ──────────────────────────────────────────────
+(function() {
+  if (window.innerWidth > 768) return;
+  const hapticEls = document.querySelectorAll('a, button, .btn, .pill, .about-card, .skill-cat, .project-card, .blog-card, .cert-card, .contact-link, .mini-card');
+  hapticEls.forEach(el => {
+    el.addEventListener('touchstart', () => {
+      if (navigator.vibrate) navigator.vibrate(8);
+    }, { passive: true });
+  });
+})();
+
+// ─── SKILLS ACCORDION ─────────────────────────────────────────────
+(function() {
+  if (window.innerWidth > 768) return;
+  const skillCats = document.querySelectorAll('.skill-cat');
+  skillCats.forEach((cat, index) => {
+    const arrow = document.createElement('div');
+    arrow.className = 'accordion-arrow';
+    arrow.textContent = '▼';
+    cat.appendChild(arrow);
+    
+    // Collapse all except first by default
+    if (index > 0) {
+      cat.classList.add('collapsed');
+    } else {
+      cat.classList.add('expanded');
+    }
+    
+    cat.addEventListener('click', (e) => {
+      if (e.target.closest('.mini-card')) return;
+      const isExpanded = cat.classList.contains('expanded');
+      // Collapse all
+      skillCats.forEach(c => {
+        c.classList.remove('expanded');
+        c.classList.add('collapsed');
+      });
+      // Expand clicked if it was collapsed
+      if (!isExpanded) {
+        cat.classList.remove('collapsed');
+        cat.classList.add('expanded');
+      }
+    });
+  });
+})();
+
+// ─── PULL TO REFRESH ──────────────────────────────────────────────
+(function() {
+  if (window.innerWidth > 768) return;
+  
+  let startY = 0;
+  let pulling = false;
+  const refreshEl = document.getElementById('pullRefresh');
+  const refreshBar = document.getElementById('pullRefreshBar');
+  const body = document.body;
+  
+  body.addEventListener('touchstart', (e) => {
+    if (window.scrollY === 0) {
+      startY = e.touches[0].clientY;
+      pulling = true;
+    }
+  }, { passive: true });
+  
+  body.addEventListener('touchmove', (e) => {
+    if (!pulling) return;
+    const diff = e.touches[0].clientY - startY;
+    if (diff > 0 && window.scrollY === 0) {
+      const progress = Math.min(diff / 120, 1);
+      if (progress > 0.1) {
+        refreshEl.classList.add('visible');
+        refreshBar.style.width = (progress * 100) + '%';
+      }
+      if (progress >= 1) {
+        refreshBar.style.width = '100%';
+      }
+    }
+  }, { passive: true });
+  
+  body.addEventListener('touchend', () => {
+    if (!pulling) return;
+    pulling = false;
+    const currentWidth = parseFloat(refreshBar.style.width) || 0;
+    
+    if (currentWidth >= 100) {
+      refreshBar.style.width = '100%';
+      setTimeout(() => {
+        location.reload();
+      }, 400);
+    } else {
+      refreshEl.classList.remove('visible');
+      refreshBar.style.width = '0%';
+    }
+  });
+})();
+
+// ─── CAROUSEL DOTS (Projects & Blog & Certs) ────────────────────
+(function() {
+  if (window.innerWidth > 768) return;
+  
+  function addDots(container, className) {
+    const items = container.querySelectorAll(':scope > *');
+    if (items.length <= 1) return;
+    
+    const dotsWrapper = document.createElement('div');
+    dotsWrapper.className = 'carousel-dots';
+    const dots = [];
+    
+    items.forEach((item, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+      dotsWrapper.appendChild(dot);
+      dots.push(dot);
+    });
+    
+    container.parentNode.insertBefore(dotsWrapper, container.nextSibling);
+    
+    container.addEventListener('scroll', () => {
+      const scrollLeft = container.scrollLeft;
+      const itemWidth = items[0].offsetWidth + 16; // gap
+      const activeIndex = Math.round(scrollLeft / itemWidth);
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === activeIndex);
+      });
+    });
+  }
+  
+  const projectsGrid = document.querySelector('.projects-grid');
+  const blogGrid = document.querySelector('.blog-grid');
+  const certsGrid = document.querySelector('.certs-grid');
+  
+  if (projectsGrid) addDots(projectsGrid, 'project-card');
+  if (blogGrid) addDots(blogGrid, 'blog-card');
+  if (certsGrid) addDots(certsGrid, 'cert-card');
+})();
+
 </script>
 </body>
 </html>
