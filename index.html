@@ -340,10 +340,6 @@
     border-color: var(--cyan);
     box-shadow: 0 0 8px rgba(0,245,255,0.2);
   }
-  .lang-toggle .flag {
-    font-size: 16px;
-    line-height: 1;
-  }
   .lang-toggle .arrow {
     font-size: 10px;
     transition: transform 0.2s;
@@ -393,27 +389,19 @@
     color: var(--cyan);
     border: 1px solid var(--cyan-dark);
   }
-  .lang-option .flag {
-    font-size: 18px;
-    line-height: 1;
-  }
-  .flag-ca {
+  /* SVG flags inline */
+  .flag-icon {
     width: 20px;
     height: 14px;
-    background: linear-gradient(135deg, #004aad 60%, #fff 60%);
     border-radius: 2px;
-    position: relative;
-    display: inline-block;
-    border: 1px solid rgba(255,255,255,0.2);
+    flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,0.15);
   }
-  .flag-ca::after {
-    content: '⭐';
-    position: absolute;
-    top: 50%;
-    left: 75%;
-    transform: translate(-50%, -50%);
-    font-size: 8px;
-    filter: grayscale(1) brightness(2);
+  .flag-icon svg {
+    width: 100%;
+    height: 100%;
+    border-radius: 2px;
+    display: block;
   }
   .hamburger {
     display: none;
@@ -1715,18 +1703,48 @@
     </ul>
     <div class="lang-dropdown" id="langDropdown">
       <button class="lang-toggle" onclick="toggleLangDropdown()">
-        <span class="flag" id="currentFlag">🇪🇸</span>
+        <span class="flag-icon" id="currentFlag">
+          <svg viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
+            <rect width="30" height="5" fill="#aa151b"/>
+            <rect y="5" width="30" height="10" fill="#f1bf00"/>
+            <rect y="15" width="30" height="5" fill="#aa151b"/>
+          </svg>
+        </span>
         <span class="arrow">▼</span>
       </button>
       <div class="lang-menu">
         <button class="lang-option active" onclick="setLang('es')" data-lang="es">
-          <span class="flag">🇪🇸</span> Español
+          <span class="flag-icon">
+            <svg viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
+              <rect width="30" height="5" fill="#aa151b"/>
+              <rect y="5" width="30" height="10" fill="#f1bf00"/>
+              <rect y="15" width="30" height="5" fill="#aa151b"/>
+            </svg>
+          </span> Español
         </button>
         <button class="lang-option" onclick="setLang('en')" data-lang="en">
-          <span class="flag">🇺🇸</span> English
+          <span class="flag-icon">
+            <svg viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
+              <rect width="30" height="20" fill="#012169"/>
+              <path d="M0 0 L30 20 M30 0 L0 20" stroke="#fff" stroke-width="3"/>
+              <path d="M0 0 L30 20 M30 0 L0 20" stroke="#c8102e" stroke-width="2"/>
+              <path d="M15 0 V20 M0 10 H30" stroke="#fff" stroke-width="5"/>
+              <path d="M15 0 V20 M0 10 H30" stroke="#c8102e" stroke-width="3"/>
+            </svg>
+          </span> English
         </button>
         <button class="lang-option" onclick="setLang('ca')" data-lang="ca">
-          <span class="flag-ca"></span> Català
+          <span class="flag-icon">
+            <svg viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
+              <rect width="30" height="2.86" fill="#c8102e"/>
+              <rect y="2.86" width="30" height="2.86" fill="#fcdd09"/>
+              <rect y="5.72" width="30" height="2.86" fill="#c8102e"/>
+              <rect y="8.58" width="30" height="2.86" fill="#fcdd09"/>
+              <rect y="11.44" width="30" height="2.86" fill="#c8102e"/>
+              <rect y="14.3" width="30" height="2.86" fill="#fcdd09"/>
+              <rect y="17.16" width="30" height="2.84" fill="#c8102e"/>
+            </svg>
+          </span> Català
         </button>
       </div>
     </div>
@@ -2497,7 +2515,11 @@ const i18n = {
 };
  
 let currentLang = 'es';
-const flagMap = { es: '🇪🇸', en: '🇺🇸', ca: '<span class="flag-ca"></span>' };
+const flagMap = {
+  es: '<svg viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg"><rect width="30" height="5" fill="#aa151b"/><rect y="5" width="30" height="10" fill="#f1bf00"/><rect y="15" width="30" height="5" fill="#aa151b"/></svg>',
+  en: '<svg viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg"><rect width="30" height="20" fill="#012169"/><path d="M0 0 L30 20 M30 0 L0 20" stroke="#fff" stroke-width="3"/><path d="M0 0 L30 20 M30 0 L0 20" stroke="#c8102e" stroke-width="2"/><path d="M15 0 V20 M0 10 H30" stroke="#fff" stroke-width="5"/><path d="M15 0 V20 M0 10 H30" stroke="#c8102e" stroke-width="3"/></svg>',
+  ca: '<svg viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg"><rect width="30" height="2.86" fill="#c8102e"/><rect y="2.86" width="30" height="2.86" fill="#fcdd09"/><rect y="5.72" width="30" height="2.86" fill="#c8102e"/><rect y="8.58" width="30" height="2.86" fill="#fcdd09"/><rect y="11.44" width="30" height="2.86" fill="#c8102e"/><rect y="14.3" width="30" height="2.86" fill="#fcdd09"/><rect y="17.16" width="30" height="2.84" fill="#c8102e"/></svg>'
+};
 
 function setLang(lang) {
   currentLang = lang;
